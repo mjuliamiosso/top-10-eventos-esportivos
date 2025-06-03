@@ -1,7 +1,13 @@
+import Button from "@/components/common/Button";
+import { FaPlus } from "react-icons/fa6";
+
 export default function Home() {
   return (
     <div className="">
-      <p className="text-[color:var(--text-color)]">Teste</p>
+      <Button>
+        <FaPlus />
+        Ver mais
+      </Button>
     </div>
   );
 }
