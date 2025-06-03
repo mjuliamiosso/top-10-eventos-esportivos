@@ -22,7 +22,7 @@ const Challenge: FC<ChallengeProps> = ({
 }) => {
   return (
     <div>
-      <p className="lg:hidden block text-base font-bold text-[var(--grey-color)] uppercase text-center">
+      <p className="lg:hidden block text-base font-bold text-[var(--grea-color)] uppercase text-center">
         {category}
       </p>
       <div className="flex items-center gap-2 justify-between lg:justify-start lg:gap-5">
@@ -43,13 +43,13 @@ const Challenge: FC<ChallengeProps> = ({
             <p className="font-bold text-[var(--text-color)] uppercase text-base lg:text-2xl">
               {playerOne}
             </p>
-            <p className="text-[0.75rem] text-[var(--grey-color)] uppercase">
+            <p className="text-[0.75rem] text-[var(--gray-color)] uppercase">
               {playerOneInfo}
             </p>
           </div>
           {/* Category */}
           <div>
-            <p className="hidden lg:block text-base font-bold text-[var(--grey-color)] uppercase">
+            <p className="hidden lg:block text-base font-bold text-[var(--gray-color)] uppercase">
               {category}
             </p>
             <p className="text-[2rem] lg:text-[2.25rem] text-[var(--text-color)] font-bold">VS</p>
@@ -59,7 +59,7 @@ const Challenge: FC<ChallengeProps> = ({
             <p className="font-bold text-[var(--text-color)] uppercase text-base lg:text-2xl">
               {playerTwo}
             </p>
-            <p className="text-[0.75rem] text-[var(--grey-color)] uppercase">
+            <p className="text-[0.75rem] text-[var(--gray-color)] uppercase">
               {playerTwoInfo}
             </p>
           </div>

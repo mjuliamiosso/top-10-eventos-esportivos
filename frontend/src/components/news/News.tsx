@@ -46,7 +46,7 @@ const News: FC<NewsProps> = ({
           <p className="text-[var(--secondary-color)] text-sm font-bold">
             RGTA
           </p>
-          <p className="text-[var(--grey-color)] text-sm italic">{date}</p>
+          <p className="text-[var(--gray-color)] text-sm italic">{date}</p>
         </div>
         <p className="text-xl font-bold text-[var(--text-color)]">{title}</p>
         <p className="text-base text-[var(--text-color)]">{description}</p>

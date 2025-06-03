@@ -19,12 +19,12 @@ const EventDate: FC<EventDateProps> = ({
     <div className="flex gap-5 items-center text-[var(--text-color)] px-5 py-2 rounded-lg bg-white">
       <div className="flex flex-col w-9 items-center">
         <p className="font-bold text-[1.75rem]">{day}</p>
-        <p className="text-[var(--grey-color)] text-sm">{month}</p>
+        <p className="text-[var(--gray-color)] text-sm">{month}</p>
       </div>
       <div>
         <p className="text-base font-bold">{place}</p>
         <p className="text-sm">{address}</p>
-        <p className="text-[var(--grey-color)] text-sm">{date}</p>
+        <p className="text-[var(--gray-color)] text-sm">{date}</p>
       </div>
     </div>
   );
