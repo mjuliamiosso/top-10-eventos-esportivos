@@ -1,4 +1,4 @@
-import Ranking from "@/components/ranking/Ranking";
+import FAQ from "@/components/landingPage/FAQ";
 
 export default function Home() {
   return (
