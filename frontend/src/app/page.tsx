@@ -1,8 +1,7 @@
-
 export default function Home() {
-
   return (
-    <div className="bg-[var(--background-color)]">
-    </div>
+    <section className="bg-[var(--background-color)]">
+      <div className="container sectionSpacing"></div>
+    </section>
   );
 }
