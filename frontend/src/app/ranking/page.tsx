@@ -8,7 +8,7 @@ import React, { useState } from "react";
 import { FaPlus } from "react-icons/fa6";
 
 const page = () => {
-  const [selectedFilter, setSelectedFilter] = useState("Masculino");
+  const [selectedFilter, setSelectedFilter] = useState("Geral");
 
   //   Filtro Botões
   const filtros = [
