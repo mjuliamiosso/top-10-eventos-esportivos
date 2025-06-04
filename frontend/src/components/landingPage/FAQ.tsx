@@ -1,39 +1,53 @@
 "use client";
 
 import React, { useState } from "react";
-import { IoChevronDown } from "react-icons/io5"; // Ícone da setinha
+import { IoChevronDown } from "react-icons/io5";
+import clsx from "clsx";
 
-interface FAQProps {
+interface FaqProps {
   question: string;
   answer: string;
 }
 
-const FAQ: React.FC<FAQProps> = ({ question, answer }) => {
+const Faq: React.FC<FaqProps> = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div
-      className={`rounded-lg transition-colors duration-200 ${
-        isOpen
-          ? "bg-[#fff] text-[var(--text-color)]"
-          : "bg-white text-[var(--text-color)]"
-      }`}
+      className={clsx(
+        "rounded-lg transition-all duration-300",
+        isOpen ? "bg-white" : "bg-white border-transparent"
+      )}
     >
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex justify-between items-center p-4 font-semibold focus:outline-none cursor-pointer text-base"
+        className={clsx(
+          "w-full flex justify-between items-center p-[14px] font-semibold text-left cursor-pointer transition-colors duration-300",
+          isOpen
+            ? "text-[var(--secondary-color)]"
+            : "text-[var(--text-color)] hover:text-[var(--secondary-color)]"
+        )}
       >
-        <span className={` hover:text-[var(--secondary-color)] transition ${
-            isOpen ? "text-[var(--secondary-color)]" : ""} `}>{question}</span>
+        <span className="text-base leading-relaxed">{question}</span>
         <IoChevronDown
-          className={`text-xl transition-transform duration-200 ${
-            isOpen ? "rotate-180" : ""
-          }`}
+          className={clsx(
+            "transition-transform duration-300",
+            isOpen ? "rotate-180 text-[var(--secondary-color)]" : "text-[var(--text-color)]"
+          )}
         />
       </button>
-      {isOpen && <div className="px-4 pb-4">{answer}</div>}
+
+      <div
+        className={clsx(
+          "overflow-hidden transition-all duration-300 px-[14px]",
+          isOpen ? "max-h-40 pb-6" : "max-h-0 pb-0"
+        )}
+        aria-hidden={!isOpen}
+      >
+        <p className="text-base leading-relaxed text-[var(--text-color)]">{answer}</p>
+      </div>
     </div>
   );
 };
 
-export default FAQ;
+export default Faq;

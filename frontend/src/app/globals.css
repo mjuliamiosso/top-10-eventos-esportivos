@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+html{
+  scroll-behaviour: smooth;
+}
+
 :root {
   --text-color: #151515;
   --text-white: #f3f3f3;
@@ -57,5 +61,6 @@
 .newsGrid{
   @media (min-width: 1024px){
     grid-template-columns: 2fr 1fr;
+    
   }
 }
