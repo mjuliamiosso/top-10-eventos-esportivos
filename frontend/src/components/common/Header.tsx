@@ -10,7 +10,7 @@ const Header = () => {
 
   return (
     <header className="bg-[var(--primary-color)] px-5 py-2.5 text-[var(--text-white)] relative z-5">
-      <div className="container">
+      <div className="container px-5">
         <div className="flex items-center justify-between">
           <Image src="/logo.svg" width={141} height={66} alt="top-10-logo" />
 
