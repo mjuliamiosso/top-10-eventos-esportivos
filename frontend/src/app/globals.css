@@ -53,3 +53,9 @@
     gap: 40px;
   }
 }
+
+.newsGrid{
+  @media (min-width: 1024px){
+    grid-template-columns: 2fr 1fr;
+  }
+}
