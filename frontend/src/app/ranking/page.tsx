@@ -38,9 +38,6 @@ const page = () => {
             onSelect={(value) => setSelectedFilter(value)}
           />
         </div>
-        <p className="font-bold text-base text-[var(--secondary-color)]">
-          Ranking Geral
-        </p>
         {/* Filtro Select */}
         <div>
           <Select name="meuSelect" options={options} />
