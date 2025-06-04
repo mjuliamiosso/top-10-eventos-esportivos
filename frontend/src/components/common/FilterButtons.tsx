@@ -12,7 +12,7 @@ const FilterButtons: React.FC<FilterButtonsProps> = ({
   onSelect,
 }) => {
   return (
-    <div className="flex gap-5 flex-wrap">
+    <div className="flex gap-5 flex-wrap justify-center">
       {options.map((option) => (
         <button
           key={option}
