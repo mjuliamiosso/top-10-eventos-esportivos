@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/common/Header";
 import Footer from "@/components/common/Footer";
+import WhatsAppButton from "@/components/common/WhatsAppButton";
 
 export const metadata: Metadata = {
   title: "Top 10 Eventos Esportivos",
@@ -19,6 +20,7 @@ export default function RootLayout({
         <Header></Header>
         {children}
         <Footer></Footer>
+        <WhatsAppButton></WhatsAppButton>
       </body>
     </html>
   );
