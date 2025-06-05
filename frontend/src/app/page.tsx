@@ -6,34 +6,35 @@ import Ranking from "@/components/ranking/Ranking";
 import Link from "next/link";
 
 export default function Home() {
+  // Perguntas
   const faqs = [
     {
-      question: "Lorem Ipsum",
+      question: "Lorem Ipsum 1",
       answer:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nisl odio, lobortis sed porttitor nec, laoreet.",
     },
     {
-      question: "Lorem Ipsum",
+      question: "Lorem Ipsum 2",
       answer:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nisl odio, lobortis sed porttitor nec, laoreet.",
     },
     {
-      question: "Lorem Ipsum",
+      question: "Lorem Ipsum 3",
       answer:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nisl odio, lobortis sed porttitor nec, laoreet.",
     },
     {
-      question: "Lorem Ipsum",
+      question: "Lorem Ipsum 4",
       answer:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nisl odio, lobortis sed porttitor nec, laoreet.",
     },
     {
-      question: "Lorem Ipsum",
+      question: "Lorem Ipsum 5",
       answer:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nisl odio, lobortis sed porttitor nec, laoreet.",
     },
     {
-      question: "Lorem Ipsum",
+      question: "Lorem Ipsum 6",
       answer:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nisl odio, lobortis sed porttitor nec, laoreet.",
     },

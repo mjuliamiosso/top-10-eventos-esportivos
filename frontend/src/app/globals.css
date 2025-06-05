@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-html{
+html {
   scroll-behaviour: smooth;
 }
 
@@ -58,9 +58,8 @@ html{
   }
 }
 
-.newsGrid{
-  @media (min-width: 1024px){
+.newsGrid {
+  @media (min-width: 1024px) {
     grid-template-columns: 2fr 1fr;
-    
   }
 }

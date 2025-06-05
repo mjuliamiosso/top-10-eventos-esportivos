@@ -8,7 +8,7 @@ const page = () => {
     <section className="bg-[var(--background-color)]">
       <div className="container sectionSpacing">
         <h2 className="sectionHeading">Tennis Center</h2>
-        <div className="grid grid-cols-3 gap-5">
+        <div className="grid grid-cols-3 gap-2 lg:gap-5">
           <div className="aspect-[1/1] relative w-full">
             <Image
               src="/beach-tennis.webp"
