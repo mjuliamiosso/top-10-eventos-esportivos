@@ -9,36 +9,78 @@ import { FaPlus } from "react-icons/fa";
 const page = () => {
   const [selectedFilter, setSelectedFilter] = useState("Próximos");
 
-  const filtros = ["Próximos", "Últimos"];
+  const filter = ["Próximos", "Últimos"];
+
+  const challenges = [
+    {
+      category: "Avançado",
+      playerOne: "Lucas Almeida",
+      playerOneInfo: "Tennis Point",
+      playerOneImage: "/beach-tennis.webp",
+      playerTwo: "Bruno Costa",
+      playerTwoInfo: "Arena Top Spin",
+      playerTwoImage: "/beach-tennis.webp",
+    },
+    {
+      category: "Avançado",
+      playerOne: "Lucas Almeida",
+      playerOneInfo: "Tennis Point",
+      playerOneImage: "/beach-tennis.webp",
+      playerTwo: "Bruno Costa",
+      playerTwoInfo: "Arena Top Spin",
+      playerTwoImage: "/beach-tennis.webp",
+    },
+    {
+      category: "Avançado",
+      playerOne: "Lucas Almeida",
+      playerOneInfo: "Tennis Point",
+      playerOneImage: "/beach-tennis.webp",
+      playerTwo: "Bruno Costa",
+      playerTwoInfo: "Arena Top Spin",
+      playerTwoImage: "/beach-tennis.webp",
+    },
+    {
+      category: "Avançado",
+      playerOne: "Lucas Almeida",
+      playerOneInfo: "Tennis Point",
+      playerOneImage: "/beach-tennis.webp",
+      playerTwo: "Bruno Costa",
+      playerTwoInfo: "Arena Top Spin",
+      playerTwoImage: "/beach-tennis.webp",
+    },
+    {
+      category: "Avançado",
+      playerOne: "Lucas Almeida",
+      playerOneInfo: "Tennis Point",
+      playerOneImage: "/beach-tennis.webp",
+      playerTwo: "Bruno Costa",
+      playerTwoInfo: "Arena Top Spin",
+      playerTwoImage: "/beach-tennis.webp",
+    },
+  ];
 
   return (
     <section className="bg-[var(--background-color)]">
       <div className="container sectionSpacing">
         <h2 className="sectionHeading">Desafios</h2>
         <FilterButtons
-          options={filtros}
+          options={filter}
           selected={selectedFilter}
           onSelect={(value) => setSelectedFilter(value)}
         />
         <div className="flex flex-col gap-5">
-          <Challenge
-            category={"Avançado"}
-            playerOne={"Lucas Almeida"}
-            playerOneInfo={"Tennis Point"}
-            playerOneImage={"/beach-tennis.webp"}
-            playerTwo={"Bruno Costa"}
-            playerTwoInfo={"Arena Top Spin"}
-            playerTwoImage={"/beach-tennis.webp"}
-          ></Challenge>
-          <Challenge
-            category={"Avançado"}
-            playerOne={"Lucas Almeida"}
-            playerOneInfo={"Tennis Point"}
-            playerOneImage={"/beach-tennis.webp"}
-            playerTwo={"Bruno Costa"}
-            playerTwoInfo={"Arena Top Spin"}
-            playerTwoImage={"/beach-tennis.webp"}
-          ></Challenge>
+          {challenges.map((challenge, index) => (
+            <Challenge
+              key={index}
+              category={challenge.category}
+              playerOne={challenge.playerOne}
+              playerOneInfo={challenge.playerOneInfo}
+              playerOneImage={challenge.playerOneImage}
+              playerTwo={challenge.playerTwo}
+              playerTwoInfo={challenge.playerTwoInfo}
+              playerTwoImage={challenge.playerTwoImage}
+            />
+          ))}
         </div>
         <div className="flex justify-center">
           <Button>
