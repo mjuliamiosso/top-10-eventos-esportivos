@@ -35,7 +35,7 @@ const News: FC<NewsProps> = ({
           isHorizontal
             ? "w-[100px] h-[100px]"
             : isResponsive
-            ? "w-[100px] h-[100px] min-w-[100px] lg:w-full lg:aspect-[1/1] lg:h-[380px] lg:max-h-[380px]"
+            ? "w-[100px] h-[100px] min-w-[100px] lg:w-full lg:aspect-[1/1] lg:h-[225px] lg:max-h-[225px]"
             : "w-full max-h-[200px] aspect-[1/1] lg:max-h-[380px]"
         }`}
       >
