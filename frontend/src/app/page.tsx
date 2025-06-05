@@ -308,7 +308,9 @@ export default function Home() {
       {/* CTA */}
       <div className="bg-[var(--secondary-color)] py-[60px]">
         <div className="container flex justify-center items-center flex-col lg:flex-row gap-5">
-          <p className="text-2xl text-center font-bold text-[var(--text-white)]">Pronto pra entrar em quadra? Agende sua aula ou reserve seu espaço!</p>
+          <p className="text-2xl text-center font-bold text-[var(--text-white)]">
+            Pronto pra entrar em quadra? Agende sua aula ou reserve seu espaço!
+          </p>
           <button className="rounded-lg cursor-pointer font-bold bg-[var(--text-white))] text-[var(--secondary-color)] px-3 py-2 text-sm lg:px-4 lg:py-3 lg:text-base">
             Comece Agora
           </button>
