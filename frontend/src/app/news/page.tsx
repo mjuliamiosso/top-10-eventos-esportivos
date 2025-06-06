@@ -111,17 +111,17 @@ const page = () => {
   // Entrevistas
   const interviewList = [
     {
-      title: "João Fonseca lembra Guga em Roland Garros...",
+      title: "João Fonseca",
       info: "Torcedores ignoram partida na quadra principal para assistir...",
       date: "Ontem",
     },
     {
-      title: "João Fonseca lembra Guga em Roland Garros...",
+      title: "João Fonseca",
       info: "Torcedores ignoram partida na quadra principal para assistir...",
       date: "Ontem",
     },
     {
-      title: "João Fonseca lembra Guga em Roland Garros...",
+      title: "João Fonseca",
       info: "Torcedores ignoram partida na quadra principal para assistir...",
       date: "Ontem",
     },
