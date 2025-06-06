@@ -131,7 +131,7 @@ const page = () => {
       <div className="container sectionSpacing">
         {/* Notícias RGTA */}
         <div className="flex flex-col gap-5 lg:gap-10">
-          <h2 className="sectionHeading lg:mb-5">Na nossa quadra</h2>
+          <h2 className="sectionHeading">Na nossa quadra</h2>
           {/* Notícias em destaque */}
           <div className="grid newsGrid gap-5">
             {featuredNews.map((news, index) => (
@@ -151,6 +151,8 @@ const page = () => {
               <News key={index} variant="responsive" {...news} />
             ))}
           </div>
+
+          {/* Botão */}
           <div className="flex justify-center">
             <Button>
               <FaPlus /> Carregar mais
@@ -158,7 +160,7 @@ const page = () => {
           </div>
         </div>
         {/* Eventos */}
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-5 lg:gap-10">
           <h2 className="sectionHeading">O que ta rolando por aqui?</h2>
           {/* Lista de Eventos */}
           <div>
@@ -168,7 +170,7 @@ const page = () => {
           </div>
         </div>
         {/* Saúde e bem estar */}
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-5 lg:gap-10">
           <h2 className="sectionHeading">Saúde e bem estar</h2>
           <div className="flex flex-col lg:flex-row gap-5">
             {healthNewsList.map((news, index) => (
@@ -182,7 +184,7 @@ const page = () => {
           </div>
         </div>
         {/* Entrevistas */}
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-5 lg:gap-10">
           <h2 className="sectionHeading">Entrevistas</h2>
           <div>
             {interviewList.map((news, index) => (
