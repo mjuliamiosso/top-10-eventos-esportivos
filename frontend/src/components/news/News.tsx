@@ -23,10 +23,10 @@ const News: FC<NewsProps> = ({
     <div
       className={`flex ${
         isHorizontal
-          ? "flex-row gap-5 items-center"
+          ? "flex-row gap-5"
           : isResponsive
           ? "flex-row lg:flex-col gap-5"
-          : "flex-col"
+          : "flex-col gap-5"
       }`}
     >
       {/* Imagem */}
@@ -49,7 +49,7 @@ const News: FC<NewsProps> = ({
 
       {/* Texto */}
       <div className={`${isHorizontal || isResponsive ? "flex-1" : ""}`}>
-        <div className="flex justify-between mt-2">
+        <div className="flex justify-between">
           <p className="text-[var(--secondary-color)] text-sm font-bold">
             RGTA
           </p>
