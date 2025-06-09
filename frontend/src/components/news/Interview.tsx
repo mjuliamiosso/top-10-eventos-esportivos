@@ -10,7 +10,7 @@ interface InterviewProps {
 
 const Interview: FC<InterviewProps> = ({ title, info, date }) => {
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-5 w-[180px]">
       <div className="w-[180px] h-[300px] rounded-lg bg-gray-200">
         Vídeo
       </div>

@@ -9,6 +9,8 @@ import Ranking from "@/components/ranking/Ranking";
 import { FaPlus } from "react-icons/fa6";
 
 const API_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
+const page = () => {
+  const [selectedFilter, setSelectedFilter] = useState("Geral");
 
 type RankingItem = {
   id: string;
@@ -70,6 +72,20 @@ const Page = () => {
     };
     fetchRankings();
   }, [selectedFilter, selectedMes, limit]);
+
+  // Rankings
+   const rankings = [
+    { rank: "01", player: "Mariana Ribeiro", score: "99" },
+    { rank: "02", player: "Fernanda Souza", score: "92" },
+    { rank: "03", player: "Juliana Costa", score: "86" },
+    { rank: "04", player: "Patrícia Lima", score: "74" },
+    { rank: "05", player: "Carla Martins", score: "72" },
+    { rank: "06", player: "Mariana Ribeiro", score: "64" },
+    { rank: "07", player: "Fernanda Souza", score: "60" },
+    { rank: "08", player: "Juliana Costa", score: "52" },
+    { rank: "09", player: "Patrícia Lima", score: "50" },
+    { rank: "10", player: "Carla Martins", score: "48" },
+  ];
 
   return (
     <section className="bg-[var(--background-color)]">
