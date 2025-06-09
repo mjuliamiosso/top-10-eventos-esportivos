@@ -1,11 +1,35 @@
+"use client";
+
 import Challenge from "@/components/challenges/Challenge";
 import Button from "@/components/common/Button";
 import Faq from "@/components/landingPage/FAQ";
 import News from "@/components/news/News";
 import Ranking from "@/components/ranking/Ranking";
 import Link from "next/link";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 
 export default function Home() {
+  // Hero carrosel
+  const responsiveHero = {
+    superLargeDesktop: {
+      breakpoint: { max: 4000, min: 1440 },
+      items: 1,
+    },
+    desktop: {
+      breakpoint: { max: 1440, min: 1024 },
+      items: 1,
+    },
+    tablet: {
+      breakpoint: { max: 1024, min: 768 },
+      items: 1,
+    },
+    mobile: {
+      breakpoint: { max: 464, min: 0 },
+      items: 1,
+    },
+  };
+
   // ======= Notícias =======
   const featuredNews = [
     {
@@ -142,7 +166,51 @@ export default function Home() {
   ];
   return (
     <section className="bg-[var(--background-color)]">
-      <p>hero</p>
+      <Carousel
+        swipeable={true}
+        draggable={true}
+        ssr={true}
+        infinite={true}
+        renderDotsOutside={true}
+        autoPlay={false}
+        arrows
+        dotListClass="custom-dot-list-style"
+        responsive={responsiveHero}
+      >
+        <div
+          className="bg-cover bg-center w-full flex justify-center items-center h-[400px] lg:h-[820px]"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/beach-tennis.webp')",
+          }}
+        >
+          <h1 className="text-[2rem] lg:text-[4rem] font-bold text-white text-center container">
+            Slide 01
+          </h1>
+        </div>
+        <div
+          className="bg-cover bg-center w-full flex justify-center items-center h-[400px] lg:h-[820px]"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/beach-tennis.webp')",
+          }}
+        >
+          <h1 className="text-[2rem] lg:text-[4rem] font-bold text-white text-center container">
+            Slide 02
+          </h1>
+        </div>
+        <div
+          className="bg-cover bg-center w-full flex justify-center items-center h-[400px] lg:h-[820px]"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/beach-tennis.webp')",
+          }}
+        >
+          <h1 className="text-[2rem] lg:text-[4rem] font-bold text-white text-center container">
+            Slide 03
+          </h1>
+        </div>
+      </Carousel>
       <p>patrocinios</p>
       {/* Primeira Parte */}
       <div className="container sectionSpacing">

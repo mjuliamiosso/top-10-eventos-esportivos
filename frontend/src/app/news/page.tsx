@@ -6,9 +6,9 @@ import Interview from "@/components/news/Interview";
 import News from "@/components/news/News";
 import React, { useRef } from "react";
 import { FaPlus } from "react-icons/fa6";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 const page = () => {
   // Notícias em Destaque
