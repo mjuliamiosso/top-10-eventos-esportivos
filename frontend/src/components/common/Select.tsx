@@ -8,13 +8,15 @@ interface Option {
 interface SelectProps {
   name: string;
   options: Option[];
+  value?: string;
   onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
-const Select: React.FC<SelectProps> = ({ name, options, onChange }) => {
+const Select: React.FC<SelectProps> = ({ name, options, value, onChange }) => {
   return (
     <select
       name={name}
+      value={value}
       onChange={onChange}
       className="p-2.5 text-sm lg:text-base border bg-white border-gray-300 rounded-lg cursor-pointer"
     >
