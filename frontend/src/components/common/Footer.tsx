@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaInstagram, FaWhatsapp } from "react-icons/fa";
+import { FaFacebook, FaInstagram, FaWhatsapp } from "react-icons/fa";
 
 const Footer = () => {
   return (
@@ -46,6 +46,12 @@ const Footer = () => {
               </Link>
               <Link href={""}>
                 <FaWhatsapp />
+              </Link>
+              <Link
+                href={"https://www.facebook.com/rgtatopten?mibextid=2JQ9oc"}
+                target="_blank"
+              >
+                <FaFacebook />
               </Link>
             </div>
           </div>
