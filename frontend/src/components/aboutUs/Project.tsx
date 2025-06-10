@@ -10,7 +10,7 @@ interface ProjectProps {
 const Project: FC<ProjectProps> = ({ title, description, image }) => {
   return (
     <div className="flex p-2.5 flex-col-reverse lg:flex-row items-center bg-white rounded-lg text-[var(--text-color)]">
-      <div className="flex flex-col px-5 py-10 w-full">
+      <div className="flex flex-col px-5 w-full">
         <p className="text-xl font-bold">{title}</p>
         <p className="text-base">{description}</p>
       </div>
