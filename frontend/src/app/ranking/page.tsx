@@ -22,8 +22,8 @@ type Categoria = {
 };
 
 type MesOption = {
-  value: string; // data original
-  label: string; // ex.: "jun 25"
+  value: string; // original date
+  label: string; // jun 25
 };
 
 const Page: React.FC = () => {
@@ -34,7 +34,7 @@ const Page: React.FC = () => {
   const [rankings, setRankings] = useState<RankingItem[]>([]);
   const [limit, setLimit] = useState(10);
 
-  // 1) Busca categorias
+  // search categories
   useEffect(() => {
     axios
       .get<{ data: Categoria[] }>(`${API_URL}/items/Categorias`)
@@ -45,7 +45,7 @@ const Page: React.FC = () => {
       .catch(console.error);
   }, []);
 
-  // 2) Busca todos os meses
+  // search months
   useEffect(() => {
     axios
       .get<{ data: { mes: string }[] }>(`${API_URL}/items/Rankings`, {
@@ -58,10 +58,12 @@ const Page: React.FC = () => {
         );
         const opts: MesOption[] = rawMeses.map((raw) => {
           const d = new Date(raw);
-          const label = d
-            .toLocaleString("pt-BR", { month: "short", year: "2-digit" })
-            .toLowerCase();
-          return { value: raw, label };
+          const month = d
+            .toLocaleString("pt-BR", { month: "short" })
+            .toLowerCase()
+            .replace(/\.$/, "");
+          const year = d.getFullYear().toString().slice(-2);
+          return { value: raw, label: `${month} ${year}` };
         });
         setMeses(opts);
         if (opts.length) setSelectedMes(opts[0].value);
@@ -69,7 +71,7 @@ const Page: React.FC = () => {
       .catch(console.error);
   }, []);
 
-  // 3) Busca rankings (com ou sem categoria)
+  // search all rankings
   useEffect(() => {
     if (!selectedMes) return;
 
@@ -94,7 +96,7 @@ const Page: React.FC = () => {
   return (
     <section className="bg-[var(--background-color)]">
       <div className="container sectionSpacing">
-        {/* Filtro de categoria */}
+        {/* category filter */}
         <div className="flex justify-center mb-4">
           <FilterButtons
             options={["Geral", ...categorias.map((c) => c.nome)]}
@@ -107,7 +109,7 @@ const Page: React.FC = () => {
           Ranking {selectedFilter}
         </p>
 
-        {/* Filtro de mês */}
+        {/* month filter */}
         <div className="my-2">
           <Select
             name="mes"
@@ -117,7 +119,7 @@ const Page: React.FC = () => {
           />
         </div>
 
-        {/* Tabela de Rankings */}
+        {/* rankings */}
         <div className="flex flex-col gap-2">
           <div className="flex px-[14px] justify-between items-center w-full text-[var(--dark-gray)] font-bold text-sm">
             <div className="flex items-center gap-5">
@@ -138,12 +140,14 @@ const Page: React.FC = () => {
           </div>
         </div>
 
-        {/* Carregar mais */}
-        <div className="flex justify-center mt-4">
-          <Button onClick={() => setLimit((prev) => prev + 10)}>
-            <FaPlus /> Carregar mais
-          </Button>
-        </div>
+        {/* load more */}
+        {rankings.length === limit && (
+          <div className="flex justify-center mt-4">
+            <Button onClick={() => setLimit((prev) => prev + 10)}>
+              <FaPlus /> Carregar mais
+            </Button>
+          </div>
+        )}
       </div>
     </section>
   );
