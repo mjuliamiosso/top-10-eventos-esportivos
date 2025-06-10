@@ -153,6 +153,36 @@ const page = () => {
       info: "Torcedores ignoram partida na quadra principal para assistir...",
       date: "Ontem",
     },
+    {
+      title: "João Fonseca",
+      info: "Torcedores ignoram partida na quadra principal para assistir...",
+      date: "Ontem",
+    },
+    {
+      title: "João Fonseca",
+      info: "Torcedores ignoram partida na quadra principal para assistir...",
+      date: "Ontem",
+    },
+    {
+      title: "João Fonseca",
+      info: "Torcedores ignoram partida na quadra principal para assistir...",
+      date: "Ontem",
+    },
+    {
+      title: "João Fonseca",
+      info: "Torcedores ignoram partida na quadra principal para assistir...",
+      date: "Ontem",
+    },
+    {
+      title: "João Fonseca",
+      info: "Torcedores ignoram partida na quadra principal para assistir...",
+      date: "Ontem",
+    },
+    {
+      title: "João Fonseca",
+      info: "Torcedores ignoram partida na quadra principal para assistir...",
+      date: "Ontem",
+    },
   ];
 
   // Carrosel Evento
@@ -175,7 +205,28 @@ const page = () => {
     },
   };
 
-  const carouselRef = useRef<any>(null);
+  // Carrosel Entrevistas
+  const responsiveInterview = {
+    superLargeDesktop: {
+      breakpoint: { max: 4000, min: 1440 },
+      items: 6,
+    },
+    desktop: {
+      breakpoint: { max: 1440, min: 1024 },
+      items: 6,
+    },
+    tablet: {
+      breakpoint: { max: 1024, min: 768 },
+      items: 3,
+    },
+    mobile: {
+      breakpoint: { max: 464, min: 0 },
+      items: 2,
+    },
+  };
+
+  const carouselRefEvent = useRef<any>(null);
+  const carouselRefInterview = useRef<any>(null);
 
   return (
     <section className="bg-[var(--background-color)]">
@@ -214,16 +265,16 @@ const page = () => {
         <div className="flex flex-col gap-5 lg:gap-10">
           <div className="flex justify-between items-center">
             <h2 className="sectionHeading">O que ta rolando por aqui?</h2>
-            <div className="flex justify-end gap-5">
+            <div className="lg:flex lg:justify-end gap-5 hidden">
               <button
-                onClick={() => carouselRef.current?.previous()}
-                className="bg-white text-black rounded-full p-2 hover:bg-gray-100 cursor-pointer"
+                onClick={() => carouselRefEvent.current?.previous()}
+                className="bg-white text-black rounded-full p-2 transition hover:bg-gray-100 cursor-pointer"
               >
                 <IoIosArrowBack />
               </button>
               <button
-                onClick={() => carouselRef.current?.next()}
-                className="bg-white text-black rounded-full p-2 hover:bg-gray-100 cursor-pointer"
+                onClick={() => carouselRefEvent.current?.next()}
+                className="bg-white text-black rounded-full p-2 transition hover:bg-gray-100 cursor-pointer"
               >
                 <IoIosArrowForward />
               </button>
@@ -231,7 +282,7 @@ const page = () => {
           </div>
           {/* Lista de Eventos */}
           <Carousel
-            ref={carouselRef}
+            ref={carouselRefEvent}
             swipeable={true}
             draggable={true}
             ssr={true}
@@ -263,12 +314,39 @@ const page = () => {
         </div>
         {/* Entrevistas */}
         <div className="flex flex-col gap-5 lg:gap-10">
-          <h2 className="sectionHeading">Entrevistas</h2>
-          <div>
+          <div className="flex justify-between items-center">
+            <h2 className="sectionHeading">Entrevistas</h2>
+            <div className="lg:flex lg:justify-end gap-5 hidden">
+              <button
+                onClick={() => carouselRefInterview.current?.previous()}
+                className="bg-white text-black rounded-full p-2 transition hover:bg-gray-100 cursor-pointer"
+              >
+                <IoIosArrowBack />
+              </button>
+              <button
+                onClick={() => carouselRefInterview.current?.next()}
+                className="bg-white text-black rounded-full p-2 transition hover:bg-gray-100 cursor-pointer"
+              >
+                <IoIosArrowForward />
+              </button>
+            </div>
+          </div>
+          <Carousel
+            ref={carouselRefInterview}
+            swipeable={true}
+            draggable={true}
+            ssr={true}
+            infinite={true}
+            renderDotsOutside={true}
+            autoPlay={false}
+            arrows={false}
+            dotListClass="custom-dot-list-style"
+            responsive={responsiveInterview}
+          >
             {interviewList.map((news, index) => (
               <Interview key={index} {...news} />
             ))}
-          </div>
+          </Carousel>
         </div>
       </div>
     </section>
