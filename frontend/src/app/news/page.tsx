@@ -233,7 +233,7 @@ const page = () => {
       <div className="container sectionSpacing">
         {/* Notícias RGTA */}
         <div className="flex flex-col gap-5 lg:gap-10">
-          <h2 className="sectionHeading">Na nossa quadra</h2>
+          <h2 className="sectionHeading">Fique por dentro</h2>
           {/* Notícias em destaque */}
           <div className="grid newsGrid gap-5">
             {featuredNews.map((news, index) => (
