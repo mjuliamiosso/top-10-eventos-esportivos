@@ -57,9 +57,9 @@ const News: FC<NewsProps> = ({
           <p className="text-[var(--gray-color)] text-sm italic">{date}</p>
         </div>
         <Link href=''>
-          <p className="text-xl font-bold text-[var(--text-color)] hover:text-[var(--secondary-color)] transition">{title}</p>
+          <p className="textLimit text-xl font-bold text-[var(--text-color)] hover:text-[var(--secondary-color)] transition">{title}</p>
         </Link>
-        <p className="text-base text-[var(--text-color)]">{description}</p>
+        <p className="textLimit text-base text-[var(--text-color)]">{description}</p>
       </div>
     </div>
   );
