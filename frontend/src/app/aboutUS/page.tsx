@@ -63,11 +63,11 @@ const page = () => {
               contact={"Caraguatatuba"}
               info={""}
             ></ContactInfo>
-            <Link href={""}>
+            <Link href={"https://wa.me/5512982983083"} target="_blank">
               <ContactInfo
                 icon={<BsWhatsapp />}
                 contact={"WhatsApp"}
-                info={"(00) 0 0000-0000"}
+                info={"(12) 98298-3083"}
               ></ContactInfo>
             </Link>
             <Link
