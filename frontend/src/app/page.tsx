@@ -1,11 +1,63 @@
+"use client";
+
 import Challenge from "@/components/challenges/Challenge";
 import Button from "@/components/common/Button";
 import Faq from "@/components/landingPage/FAQ";
 import News from "@/components/news/News";
 import Ranking from "@/components/ranking/Ranking";
 import Link from "next/link";
+import Image from "next/image";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 
 export default function Home() {
+  // Hero carrosel
+  const responsiveHero = {
+    superLargeDesktop: {
+      breakpoint: { max: 4000, min: 1440 },
+      items: 1,
+    },
+    desktop: {
+      breakpoint: { max: 1440, min: 1024 },
+      items: 1,
+    },
+    tablet: {
+      breakpoint: { max: 1024, min: 768 },
+      items: 1,
+    },
+    mobile: {
+      breakpoint: { max: 464, min: 0 },
+      items: 1,
+    },
+  };
+
+  //Patrocínios carrossel
+  const responsiveSponsor = {
+    superLargeDesktop: {
+      breakpoint: { max: 4000, min: 1536 },
+      items: 12,
+    },
+    desktop: {
+      breakpoint: { max: 1536, min: 1280 },
+      items: 10,
+    },
+    largeTablet: {
+      breakpoint: { max: 1280, min: 1024 },
+      items: 8,
+    },
+    tablet: {
+      breakpoint: { max: 1024, min: 768 },
+      items: 6,
+    },
+    smallTablet: {
+      breakpoint: { max: 768, min: 640 },
+      items: 4,
+    },
+    mobile: {
+      breakpoint: { max: 640, min: 0 },
+      items: 3,
+    },
+  };
   // ======= Notícias =======
   const featuredNews = [
     {
@@ -142,8 +194,172 @@ export default function Home() {
   ];
   return (
     <section className="bg-[var(--background-color)]">
-      <p>hero</p>
-      <p>patrocinios</p>
+      <section className="flex flex-col gap-5">
+        <Carousel
+          swipeable={true}
+          draggable={true}
+          ssr={true}
+          infinite={true}
+          renderDotsOutside={true}
+          autoPlay={false}
+          arrows
+          dotListClass="custom-dot-list-style"
+          responsive={responsiveHero}
+        >
+          <div
+            className="bg-cover bg-center w-full flex justify-center items-center h-[400px] lg:h-[820px]"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/beach-tennis.webp')",
+            }}
+          >
+            <h1 className="text-[2rem] lg:text-[4rem] font-bold text-white text-center container">
+              Slide 01
+            </h1>
+          </div>
+          <div
+            className="bg-cover bg-center w-full flex justify-center items-center h-[400px] lg:h-[820px]"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/beach-tennis.webp')",
+            }}
+          >
+            <h1 className="text-[2rem] lg:text-[4rem] font-bold text-white text-center container">
+              Slide 02
+            </h1>
+          </div>
+          <div
+            className="bg-cover bg-center w-full flex justify-center items-center h-[400px] lg:h-[820px]"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/beach-tennis.webp')",
+            }}
+          >
+            <h1 className="text-[2rem] lg:text-[4rem] font-bold text-white text-center container">
+              Slide 03
+            </h1>
+          </div>
+        </Carousel>
+        <Carousel
+          infinite={true}
+          partialVisible={false}
+          arrows={false}
+          swipeable={false}
+          autoPlay={true}
+          autoPlaySpeed={1}
+          transitionDuration={1000}
+          customTransition="transform 1000ms linear"
+          draggable={false}
+          keyBoardControl={true}
+          responsive={responsiveSponsor}
+        >
+          <div className="w-[130px] h-[60px] aspect-[1/1] relative">
+            <Image
+              src="/sponsors/1000-tintas.png"
+              alt="project-image"
+              fill
+              className="object-cover object-center rounded-[6px]"
+            />
+          </div>
+          <div className="w-[130px] h-[60px] aspect-[1/1] relative">
+            <Image
+              src="/sponsors/canto-bravo.png"
+              alt="project-image"
+              fill
+              className="object-cover object-center rounded-[6px]"
+            />
+          </div>
+          <div className="w-[130px] h-[60px] aspect-[1/1] relative">
+            <Image
+              src="/sponsors/digo-tenis.png"
+              alt="project-image"
+              fill
+              className="object-cover object-center rounded-[6px]"
+            />
+          </div>
+          <div className="w-[130px] h-[60px] aspect-[1/1] relative">
+            <Image
+              src="/sponsors/j-bike.png"
+              alt="project-image"
+              fill
+              className="object-cover object-center rounded-[6px]"
+            />
+          </div>
+          <div className="w-[130px] h-[60px] aspect-[1/1] relative">
+            <Image
+              src="/sponsors/joti.png"
+              alt="project-image"
+              fill
+              className="object-cover object-center rounded-[6px]"
+            />
+          </div>
+          <div className="w-[130px] h-[60px] aspect-[1/1] relative">
+            <Image
+              src="/sponsors/leomar.png"
+              alt="project-image"
+              fill
+              className="object-cover object-center rounded-[6px]"
+            />
+          </div>
+          <div className="w-[130px] h-[60px] aspect-[1/1] relative">
+            <Image
+              src="/sponsors/lig-chopp.png"
+              alt="project-image"
+              fill
+              className="object-cover object-center rounded-[6px]"
+            />
+          </div>
+          <div className="w-[130px] h-[60px] aspect-[1/1] relative">
+            <Image
+              src="/sponsors/mega.png"
+              alt="project-image"
+              fill
+              className="object-cover object-center rounded-[6px]"
+            />
+          </div>
+          <div className="w-[130px] h-[60px] aspect-[1/1] relative">
+            <Image
+              src="/sponsors/mobicell.png"
+              alt="project-image"
+              fill
+              className="object-cover object-center rounded-[6px]"
+            />
+          </div>
+          <div className="w-[130px] h-[60px] aspect-[1/1] relative">
+            <Image
+              src="/sponsors/mrd-projetos-construcoes.png"
+              alt="project-image"
+              fill
+              className="object-cover object-center rounded-[6px]"
+            />
+          </div>
+          <div className="w-[130px] h-[60px] aspect-[1/1] relative">
+            <Image
+              src="/sponsors/tata-climatizacao.png"
+              alt="project-image"
+              fill
+              className="object-cover object-center rounded-[6px]"
+            />
+          </div>
+          <div className="w-[130px] h-[60px] aspect-[1/1] relative">
+            <Image
+              src="/sponsors/universo-motos.png"
+              alt="project-image"
+              fill
+              className="object-cover object-center rounded-[6px]"
+            />
+          </div>
+          <div className="w-[130px] h-[60px] aspect-[1/1] relative">
+            <Image
+              src="/sponsors/uroproct.webp"
+              alt="project-image"
+              fill
+              className="object-cover object-center rounded-[6px]"
+            />
+          </div>
+        </Carousel>
+      </section>
+
       {/* Primeira Parte */}
       <div className="container sectionSpacing">
         {/* Notícias */}

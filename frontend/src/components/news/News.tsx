@@ -1,5 +1,6 @@
 import React, { FC } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 interface NewsProps {
   title: string;
@@ -55,7 +56,9 @@ const News: FC<NewsProps> = ({
           </p>
           <p className="text-[var(--gray-color)] text-sm italic">{date}</p>
         </div>
-        <p className="text-xl font-bold text-[var(--text-color)]">{title}</p>
+        <Link href=''>
+          <p className="text-xl font-bold text-[var(--text-color)] hover:text-[var(--secondary-color)] transition">{title}</p>
+        </Link>
         <p className="text-base text-[var(--text-color)]">{description}</p>
       </div>
     </div>
