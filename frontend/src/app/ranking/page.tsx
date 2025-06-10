@@ -49,13 +49,16 @@ const Page: React.FC = () => {
   useEffect(() => {
     axios
       .get<{ data: { mes: string }[] }>(`${API_URL}/items/Rankings`, {
-        params: { fields: ["mes"] },
+        params: {
+          fields: ["mes"],
+          filter: { status: { _eq: "published" } },
+        },
       })
       .then((res) => {
-        const todos = res.data.data;
-        const rawMeses = Array.from(new Set(todos.map((r) => r.mes))).sort(
-          (a, b) => b.localeCompare(a)
-        );
+        const rawMeses = Array.from(
+          new Set(res.data.data.map((r) => r.mes))
+        ).sort((a, b) => b.localeCompare(a));
+
         const opts: MesOption[] = rawMeses.map((raw) => {
           const d = new Date(raw);
           const month = d
@@ -65,17 +68,21 @@ const Page: React.FC = () => {
           const year = d.getFullYear().toString().slice(-2);
           return { value: raw, label: `${month} ${year}` };
         });
+
         setMeses(opts);
         if (opts.length) setSelectedMes(opts[0].value);
       })
       .catch(console.error);
   }, []);
 
-  // search all rankings
+  // search rankings
   useEffect(() => {
     if (!selectedMes) return;
 
-    const filter: any = { mes: { _eq: selectedMes } };
+    const filter: any = {
+      status: { _eq: "published" },
+      mes: { _eq: selectedMes },
+    };
     if (selectedFilter !== "Geral") {
       filter.categoria = { nome: { _eq: selectedFilter } };
     }
