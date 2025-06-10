@@ -44,7 +44,7 @@ const Footer = () => {
               >
                 <FaInstagram />
               </Link>
-              <Link href={""}>
+              <Link href={"https://wa.me/5512982983083"} target="_blank">
                 <FaWhatsapp />
               </Link>
               <Link

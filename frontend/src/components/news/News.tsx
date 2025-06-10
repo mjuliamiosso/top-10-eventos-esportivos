@@ -32,7 +32,7 @@ const News: FC<NewsProps> = ({
     >
       {/* Imagem */}
       <div
-        className={`relative ${
+        className={`relative overflow-hidden rounded-lg ${
           isHorizontal
             ? "w-[100px] h-[100px]"
             : isResponsive
@@ -44,7 +44,7 @@ const News: FC<NewsProps> = ({
           src={image}
           alt="news-image"
           fill
-          className="object-cover object-center rounded-lg"
+          className="object-cover object-center rounded-lg hover:scale-105 transition-transform duration-300"
         />
       </div>
 
@@ -56,10 +56,14 @@ const News: FC<NewsProps> = ({
           </p>
           <p className="text-[var(--gray-color)] text-sm italic">{date}</p>
         </div>
-        <Link href=''>
-          <p className="textLimit text-xl font-bold text-[var(--text-color)] hover:text-[var(--secondary-color)] transition">{title}</p>
+        <Link href="">
+          <p className="textLimit text-xl font-bold text-[var(--text-color)] hover:text-[var(--secondary-color)] transition">
+            {title}
+          </p>
         </Link>
-        <p className="textLimit text-base text-[var(--text-color)]">{description}</p>
+        <p className="textLimit text-base text-[var(--text-color)]">
+          {description}
+        </p>
       </div>
     </div>
   );
