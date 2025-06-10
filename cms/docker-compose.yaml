@@ -1,16 +1,27 @@
-name: directus-cms-template
+name: top10-cms
 services:
   database:
+    container_name: top10-db
     image: postgis/postgis:16-master
     platform: linux/amd64
     volumes:
-      - ./data/database:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_DATABASE}
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${DB_USER}", "-d", "${DB_DATABASE}", "-h", "localhost"]
+      test:
+        [
+          "CMD",
+          "pg_isready",
+          "-U",
+          "${DB_USER}",
+          "-d",
+          "${DB_DATABASE}",
+          "-h",
+          "localhost",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -18,7 +29,10 @@ services:
       start_period: 30s
 
   cache:
+    container_name: top10-cache
     image: redis:6
+    volumes:
+      - cache-data:/data
     healthcheck:
       test: ["CMD-SHELL", "[ $$(redis-cli ping) = 'PONG' ]"]
       interval: 10s
@@ -28,12 +42,12 @@ services:
       start_period: 30s
 
   directus:
+    container_name: top10-directus
     image: directus/directus:11.7.2
     ports:
       - ${DIRECTUS_PORT}:8055
     volumes:
-      - ./uploads:/directus/uploads
-      - ./extensions:/directus/extensions
+      - uploads:/directus/uploads
     depends_on:
       database:
         condition: service_healthy
@@ -83,3 +97,8 @@ services:
       EMAIL_SMTP_PORT: ${EMAIL_SMTP_PORT}
       EMAIL_SMTP_USER: ${EMAIL_SMTP_USER}
       EMAIL_SMTP_PASSWORD: ${EMAIL_SMTP_PASSWORD}
+
+volumes:
+  db-data:
+  cache-data:
+  uploads:

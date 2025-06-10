@@ -9,8 +9,6 @@ import Ranking from "@/components/ranking/Ranking";
 import { FaPlus } from "react-icons/fa6";
 
 const API_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
-const page = () => {
-  const [selectedFilter, setSelectedFilter] = useState("Geral");
 
 type RankingItem = {
   id: string;
@@ -23,79 +21,85 @@ type Categoria = {
   nome: string;
 };
 
-const Page = () => {
+type MesOption = {
+  value: string; // data original
+  label: string; // ex.: "jun 25"
+};
+
+const Page: React.FC = () => {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
-  const [meses, setMeses] = useState<string[]>([]);
-  const [selectedFilter, setSelectedFilter] = useState("");
-  const [selectedMes, setSelectedMes] = useState("");
+  const [meses, setMeses] = useState<MesOption[]>([]);
+  const [selectedFilter, setSelectedFilter] = useState("Geral");
+  const [selectedMes, setSelectedMes] = useState<string>("");
   const [rankings, setRankings] = useState<RankingItem[]>([]);
   const [limit, setLimit] = useState(10);
 
+  // 1) Busca categorias
   useEffect(() => {
-    const fetchCategorias = async () => {
-      const res = await axios.get(`${API_URL}/items/Categorias`);
-      const nomes = res.data.data;
-      setCategorias(nomes);
-      if (nomes.length > 0) setSelectedFilter(nomes[0].nome);
-    };
-    fetchCategorias();
+    axios
+      .get<{ data: Categoria[] }>(`${API_URL}/items/Categorias`)
+      .then((res) => {
+        setCategorias(res.data.data);
+        setSelectedFilter("Geral");
+      })
+      .catch(console.error);
   }, []);
 
+  // 2) Busca todos os meses
   useEffect(() => {
-    const fetchMeses = async () => {
-      const res = await axios.get(`${API_URL}/items/Rankings`);
-      const todos = res.data.data as { mes: string }[];
-      const mesesUnicos = Array.from(new Set(todos.map((r) => r.mes))).sort(
-        (a, b) => b.localeCompare(a)
-      );
-      setMeses(mesesUnicos);
-      if (mesesUnicos.length > 0) setSelectedMes(mesesUnicos[0]);
-    };
-    fetchMeses();
+    axios
+      .get<{ data: { mes: string }[] }>(`${API_URL}/items/Rankings`, {
+        params: { fields: ["mes"] },
+      })
+      .then((res) => {
+        const todos = res.data.data;
+        const rawMeses = Array.from(new Set(todos.map((r) => r.mes))).sort(
+          (a, b) => b.localeCompare(a)
+        );
+        const opts: MesOption[] = rawMeses.map((raw) => {
+          const d = new Date(raw);
+          const label = d
+            .toLocaleString("pt-BR", { month: "short", year: "2-digit" })
+            .toLowerCase();
+          return { value: raw, label };
+        });
+        setMeses(opts);
+        if (opts.length) setSelectedMes(opts[0].value);
+      })
+      .catch(console.error);
   }, []);
 
+  // 3) Busca rankings (com ou sem categoria)
   useEffect(() => {
-    if (!selectedFilter || !selectedMes) return;
-    const fetchRankings = async () => {
-      const res = await axios.get(`${API_URL}/items/Rankings`, {
+    if (!selectedMes) return;
+
+    const filter: any = { mes: { _eq: selectedMes } };
+    if (selectedFilter !== "Geral") {
+      filter.categoria = { nome: { _eq: selectedFilter } };
+    }
+
+    axios
+      .get<{ data: RankingItem[] }>(`${API_URL}/items/Rankings`, {
         params: {
-          filter: {
-            categoria: { nome: { _eq: selectedFilter } },
-            mes: { _eq: selectedMes },
-          },
+          filter,
           fields: ["id", "pontos", "jogador.nome"],
           sort: ["-pontos"],
           limit,
         },
-      });
-      setRankings(res.data.data);
-    };
-    fetchRankings();
+      })
+      .then((res) => setRankings(res.data.data))
+      .catch(console.error);
   }, [selectedFilter, selectedMes, limit]);
-
-  // Rankings
-   const rankings = [
-    { rank: "01", player: "Mariana Ribeiro", score: "99" },
-    { rank: "02", player: "Fernanda Souza", score: "92" },
-    { rank: "03", player: "Juliana Costa", score: "86" },
-    { rank: "04", player: "Patrícia Lima", score: "74" },
-    { rank: "05", player: "Carla Martins", score: "72" },
-    { rank: "06", player: "Mariana Ribeiro", score: "64" },
-    { rank: "07", player: "Fernanda Souza", score: "60" },
-    { rank: "08", player: "Juliana Costa", score: "52" },
-    { rank: "09", player: "Patrícia Lima", score: "50" },
-    { rank: "10", player: "Carla Martins", score: "48" },
-  ];
 
   return (
     <section className="bg-[var(--background-color)]">
       <div className="container sectionSpacing">
-        {/* Filtro Botões */}
-        <div className="flex justify-center">
+        {/* Filtro de categoria */}
+        <div className="flex justify-center mb-4">
           <FilterButtons
-            options={categorias.map((c) => c.nome)}
+            options={["Geral", ...categorias.map((c) => c.nome)]}
             selected={selectedFilter}
-            onSelect={(value) => setSelectedFilter(value)}
+            onSelect={setSelectedFilter}
           />
         </div>
 
@@ -103,17 +107,17 @@ const Page = () => {
           Ranking {selectedFilter}
         </p>
 
-        {/* Filtro Select */}
-        <div>
+        {/* Filtro de mês */}
+        <div className="my-2">
           <Select
             name="mes"
-            options={meses.map((m) => ({ value: m, label: m }))}
+            options={meses.map((m) => ({ value: m.value, label: m.label }))}
             value={selectedMes}
             onChange={(e) => setSelectedMes(e.target.value)}
           />
         </div>
 
-        {/* Ranking */}
+        {/* Tabela de Rankings */}
         <div className="flex flex-col gap-2">
           <div className="flex px-[14px] justify-between items-center w-full text-[var(--dark-gray)] font-bold text-sm">
             <div className="flex items-center gap-5">
@@ -122,13 +126,11 @@ const Page = () => {
             </div>
             <p>Total pts</p>
           </div>
-
-          {/* Lista */}
           <div className="flex flex-col gap-2">
-            {rankings.map((item, index) => (
+            {rankings.map((item, i) => (
               <Ranking
                 key={item.id}
-                rank={(index + 1).toString().padStart(2, "0")}
+                rank={(i + 1).toString().padStart(2, "0")}
                 player={item.jogador?.nome || "Desconhecido"}
                 score={item.pontos.toString()}
               />
@@ -136,7 +138,8 @@ const Page = () => {
           </div>
         </div>
 
-        <div className="flex justify-center">
+        {/* Carregar mais */}
+        <div className="flex justify-center mt-4">
           <Button onClick={() => setLimit((prev) => prev + 10)}>
             <FaPlus /> Carregar mais
           </Button>
