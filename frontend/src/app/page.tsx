@@ -162,34 +162,34 @@ export default function Home() {
   // ======= Perguntas =======
   const faqs = [
     {
-      question: "Lorem Ipsum 1",
+      question: "O que é o Top 10?",
       answer:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nisl odio, lobortis sed porttitor nec, laoreet.",
+        "É uma empresa familiar que promove eventos esportivos, especificamente o tênis, tais como: torneio, aulas, clínicas, ranking e mais...",
     },
     {
-      question: "Lorem Ipsum 2",
+      question: "O que é RGTA?",
       answer:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nisl odio, lobortis sed porttitor nec, laoreet.",
+        "Ranking geral de tênis amador, é um projeto contínuo de competição. Cada tenista é informado de forma clara e objetiva sua categoria, posição e pontuação.",
     },
     {
-      question: "Lorem Ipsum 3",
+      question: "Como faço para participar do Ranking?",
       answer:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nisl odio, lobortis sed porttitor nec, laoreet.",
+        "Você precisa se inscrever, inscrição aberta o ano todo, será realizada uma entrevista com o professor para avaliar a categoria.",
     },
     {
-      question: "Lorem Ipsum 4",
+      question: "Preciso ser de Caraguá para participar do RGTA?",
       answer:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nisl odio, lobortis sed porttitor nec, laoreet.",
+        "Não! O RGTA é um ranking aberto para todos tenistas amadores.",
     },
     {
-      question: "Lorem Ipsum 5",
+      question: "Como e onde acontece o Ranking?",
       answer:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nisl odio, lobortis sed porttitor nec, laoreet.",
+        "O RGTA acontece através de desafios, o local é a critério dos participantes, com aviso prévio a nossa equipe, temos convênio com algumas academias.",
     },
     {
-      question: "Lorem Ipsum 6",
+      question: "Como posso sugerir eventos ou enviar notícias para o site?",
       answer:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nisl odio, lobortis sed porttitor nec, laoreet.",
+        "Aqui mesmo pelo site, pelo WhatsApp, suas informações e sugestões serão bem-vindas, juntos vamos mais longe!",
     },
   ];
   return (
@@ -361,12 +361,10 @@ export default function Home() {
       </section>
 
       {/* Primeira Parte */}
-      <div className="container sectionSpacing">
+      <section className="container sectionSpacing">
         {/* Notícias */}
         <div className="flex flex-col gap-5 lg:gap-10">
-          <h2 className="sectionHeading">
-            Fique por dentro das últimas do tênis
-          </h2>
+          <h2 className="sectionHeading">Fique por dentro</h2>
           {/* Notícias em destaque */}
           <div className="grid newsGrid gap-5">
             {featuredNews.map((news, index) => (
@@ -400,9 +398,7 @@ export default function Home() {
         </div>
         {/* Rankings */}
         <div className="flex flex-col gap-5 lg:gap-10">
-          <h2 className="sectionHeading">
-            Nosso ranking: veja quem se destacou
-          </h2>
+          <h2 className="sectionHeading">Ranking Atual</h2>
           {/* Tabela de Rankings */}
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {/* Ranking Feminino */}
@@ -522,20 +518,21 @@ export default function Home() {
             </Link>
           </div>
         </div>
-      </div>
+      </section>
       {/* CTA */}
-      <div className="bg-[var(--secondary-color)] py-[60px]">
+      <section className="bg-[var(--secondary-color)] py-[60px]">
         <div className="container flex justify-center items-center flex-col lg:flex-row gap-5">
           <p className="text-2xl text-center font-bold text-[var(--text-white)]">
-            Pronto pra entrar em quadra? Agende sua aula ou reserve seu espaço!
+            Pronto pra entrar em quadra? Entre para o Ranking ou agende sua
+            aula!
           </p>
           <button className="rounded-lg cursor-pointer font-bold bg-[var(--text-white))] text-[var(--secondary-color)] px-3 py-2 text-sm lg:px-4 lg:py-3 lg:text-base">
             Comece Agora
           </button>
         </div>
-      </div>
+      </section>
       {/* Segunda Parte */}
-      <div className="container sectionSpacing">
+      <section className="container sectionSpacing">
         {/* Desafios */}
         <div className="flex flex-col gap-5 lg:gap-10">
           <h2 className="sectionHeading">Topa um desafio?</h2>
@@ -568,7 +565,7 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </div>
+      </section>
     </section>
   );
 }
