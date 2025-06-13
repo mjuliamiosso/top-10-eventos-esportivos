@@ -58,7 +58,7 @@ const News: FC<NewsProps> = ({
           alt={titulo}
           fill
           unoptimized
-          className="object-cover object-center rounded-lg hover:scale-105 transition-transform duration-300"
+          className="object-cover object-center rounded-lg hover:scale-105 transition-all duration-300 ease-in-out"
         />
       </div>
       <div className={`${isHorizontal || isResponsive ? "flex-1" : ""}`}>
@@ -69,7 +69,7 @@ const News: FC<NewsProps> = ({
           <p className="text-[var(--gray-color)] text-sm italic">{dateStr}</p>
         </div>
         <Link href={`/noticias/${slug}`}>
-          <p className="textLimit text-xl font-bold text-[var(--text-color)] hover:text-[var(--secondary-color)] transition">
+          <p className="textLimit text-xl font-bold text-[var(--text-color)] hover:text-[var(--secondary-color)] transition-all duration-300 ease-in-out">
             {titulo}
           </p>
         </Link>
