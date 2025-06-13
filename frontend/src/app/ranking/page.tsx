@@ -103,6 +103,7 @@ const Page: React.FC = () => {
   return (
     <section className="bg-[var(--background-color)]">
       <div className="container sectionSpacing">
+        <h2 className="sectionHeading">Ranking</h2>
         {/* category filter */}
         <div className="flex justify-center mb-4">
           <FilterButtons
@@ -111,10 +112,6 @@ const Page: React.FC = () => {
             onSelect={setSelectedFilter}
           />
         </div>
-
-        <p className="font-bold text-base text-[var(--secondary-color)]">
-          Ranking {selectedFilter}
-        </p>
 
         {/* month filter */}
         <div className="my-2">
