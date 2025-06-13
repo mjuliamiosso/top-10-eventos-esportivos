@@ -16,7 +16,7 @@ const Ranking: FC<RankingProps> = ({
   const isCompact = variant === "compact";
 
   return (
-    <div className="bg-white rounded-lg text-[var(--text-color)] font-bold text-base p-[14px]">
+    <div className="bg-white rounded-lg text-[var(--text-color)] font-bold text-base p-[14px] border border-white hover:border-[var(--secondary-color)] transition-all duration-300 ease-in-out">
       {isCompact ? (
         // COMPACT: rank e player separados
         <div className="flex justify-between items-center w-full">
