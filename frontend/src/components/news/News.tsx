@@ -1,24 +1,38 @@
+// src/components/news/News.tsx
 import React, { FC } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
 interface NewsProps {
-  title: string;
-  description: string;
-  date: string;
-  image: string;
+  id: string;
+  slug: string;
+  tag?: { id: string; nome: string } | null;
+  titulo: string;
+  subtitulo: string;
+  imagem: string | null;
+  date_created: string;
   variant?: "vertical" | "horizontal" | "responsive";
 }
 
+const API_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
+
 const News: FC<NewsProps> = ({
-  title,
-  description,
-  date,
-  image,
+  slug,
+  tag,
+  titulo,
+  subtitulo,
+  imagem,
+  date_created,
   variant = "vertical",
 }) => {
   const isHorizontal = variant === "horizontal";
   const isResponsive = variant === "responsive";
+  const dateStr = new Date(date_created).toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+  const imgUrl = imagem ? `${API_URL}/assets/${imagem}` : "/fallback.jpg";
 
   return (
     <div
@@ -30,7 +44,6 @@ const News: FC<NewsProps> = ({
           : "flex-col gap-5"
       }`}
     >
-      {/* Imagem */}
       <div
         className={`relative overflow-hidden rounded-lg ${
           isHorizontal
@@ -41,28 +54,27 @@ const News: FC<NewsProps> = ({
         }`}
       >
         <Image
-          src={image}
-          alt="news-image"
+          src={imgUrl}
+          alt={titulo}
           fill
+          unoptimized
           className="object-cover object-center rounded-lg hover:scale-105 transition-transform duration-300"
         />
       </div>
-
-      {/* Texto */}
       <div className={`${isHorizontal || isResponsive ? "flex-1" : ""}`}>
         <div className="flex justify-between">
           <p className="text-[var(--secondary-color)] text-sm font-bold">
-            RGTA
+            {tag?.nome || ""}
           </p>
-          <p className="text-[var(--gray-color)] text-sm italic">{date}</p>
+          <p className="text-[var(--gray-color)] text-sm italic">{dateStr}</p>
         </div>
-        <Link href="">
+        <Link href={`/noticias/${slug}`}>
           <p className="textLimit text-xl font-bold text-[var(--text-color)] hover:text-[var(--secondary-color)] transition">
-            {title}
+            {titulo}
           </p>
         </Link>
         <p className="textLimit text-base text-[var(--text-color)]">
-          {description}
+          {subtitulo}
         </p>
       </div>
     </div>

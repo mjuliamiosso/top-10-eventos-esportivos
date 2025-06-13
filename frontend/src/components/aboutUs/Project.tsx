@@ -20,6 +20,7 @@ const Project: FC<ProjectProps> = ({ title, description, image }) => {
           src={image}
           alt="project-image"
           fill
+          unoptimized
           className="object-cover object-center rounded-[6px]"
         />
       </div>

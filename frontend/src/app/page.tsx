@@ -1,5 +1,7 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import Challenge from "@/components/challenges/Challenge";
 import Button from "@/components/common/Button";
 import Faq from "@/components/landingPage/FAQ";
@@ -10,247 +12,236 @@ import Image from "next/image";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 
+const API_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
+
+type NewsItem = {
+  id: string;
+  slug: string;
+  tag: { id: string; nome: string };
+  titulo: string;
+  subtitulo: string;
+  imagem: string | null;
+  artigo: string;
+  date_created: string;
+};
+
+type RankingItem = {
+  id: string;
+  pontos: number;
+  jogador: { nome: string };
+};
+
+type RawDesafio = {
+  id: string;
+  categoria: { nome: string };
+  datahora: string;
+  votos_1: number;
+  votos_2: number;
+  jogador_1: {
+    nome: string;
+    representacao: { nome: string };
+    foto: { id: string } | null;
+  };
+  jogador_2: {
+    nome: string;
+    representacao: { nome: string };
+    foto: { id: string } | null;
+  };
+};
+
+type UiDesafio = {
+  id: string;
+  category: string;
+  dateTime: string;
+  votesOne: number;
+  votesTwo: number;
+  playerOne: string;
+  playerOneInfo: string;
+  playerOneImage: string;
+  playerTwo: string;
+  playerTwoInfo: string;
+  playerTwoImage: string;
+};
+
+type FaqItem = { pergunta: string; resposta: string };
+
 export default function Home() {
-  // Hero carrosel
   const responsiveHero = {
-    superLargeDesktop: {
-      breakpoint: { max: 4000, min: 1440 },
-      items: 1,
-    },
-    desktop: {
-      breakpoint: { max: 1440, min: 1024 },
-      items: 1,
-    },
-    tablet: {
-      breakpoint: { max: 1024, min: 768 },
-      items: 1,
-    },
-    mobile: {
-      breakpoint: { max: 464, min: 0 },
-      items: 1,
-    },
+    superLargeDesktop: { breakpoint: { max: 4000, min: 1440 }, items: 1 },
+    desktop: { breakpoint: { max: 1440, min: 1024 }, items: 1 },
+    tablet: { breakpoint: { max: 1024, min: 768 }, items: 1 },
+    mobile: { breakpoint: { max: 464, min: 0 }, items: 1 },
   };
 
-  //Patrocínios carrossel
   const responsiveSponsor = {
-    superLargeDesktop: {
-      breakpoint: { max: 4000, min: 1536 },
-      items: 12,
-    },
-    desktop: {
-      breakpoint: { max: 1536, min: 1280 },
-      items: 10,
-    },
-    largeTablet: {
-      breakpoint: { max: 1280, min: 1024 },
-      items: 8,
-    },
-    tablet: {
-      breakpoint: { max: 1024, min: 768 },
-      items: 6,
-    },
-    smallTablet: {
-      breakpoint: { max: 768, min: 640 },
-      items: 4,
-    },
-    mobile: {
-      breakpoint: { max: 640, min: 0 },
-      items: 3,
-    },
+    superLargeDesktop: { breakpoint: { max: 4000, min: 1536 }, items: 12 },
+    desktop: { breakpoint: { max: 1536, min: 1280 }, items: 10 },
+    largeTablet: { breakpoint: { max: 1280, min: 1024 }, items: 8 },
+    tablet: { breakpoint: { max: 1024, min: 768 }, items: 6 },
+    smallTablet: { breakpoint: { max: 768, min: 640 }, items: 4 },
+    mobile: { breakpoint: { max: 640, min: 0 }, items: 3 },
   };
-  // ======= Notícias =======
-  const featuredNews = [
-    {
-      title:
-        "Bia Haddad e Luisa Stefani estreiam com vitórias nas duplas em Roland Garros",
-      description:
-        "A vitória das duas parceiras que contam com tenistas brasileiras foram com “pneus”; Rafael Matos e Marcelo Melo também jogaram, mas foram eliminados",
-      date: "Ontem",
-      image: "/beach-tennis.webp",
-    },
-  ];
 
-  const sideNews = [
-    {
-      title: "João Fonseca lembra Guga em Roland Garros...",
-      description:
-        "Torcedores ignoram partida na quadra principal para assistir...",
-      date: "Ontem",
-      image: "/beach-tennis.webp",
-    },
-    {
-      title: "João Fonseca lembra Guga em Roland Garros...",
-      description:
-        "Torcedores ignoram partida na quadra principal para assistir...",
-      date: "Ontem",
-      image: "/beach-tennis.webp",
-    },
-    {
-      title: "João Fonseca lembra Guga em Roland Garros...",
-      description:
-        "Torcedores ignoram partida na quadra principal para assistir...",
-      date: "Ontem",
-      image: "/beach-tennis.webp",
-    },
-  ];
+  const categorias = ["Feminino", "Principiante", "Intermediário", "Avançado"];
 
-  // ======= Rankings =======
-  // Feminino
-  const rankingsFemale = [
-    { rank: "01", player: "Mariana Ribeiro", score: "" },
-    { rank: "02", player: "Fernanda Souza", score: "" },
-    { rank: "03", player: "Juliana Costa", score: "" },
-    { rank: "04", player: "Patrícia Lima", score: "" },
-    { rank: "05", player: "Carla Martins", score: "" },
-  ];
-  // Principiante
-  const rankingsBeginner = [
-    { rank: "01", player: "Mariana Ribeiro", score: "" },
-    { rank: "02", player: "Fernanda Souza", score: "" },
-    { rank: "03", player: "Juliana Costa", score: "" },
-    { rank: "04", player: "Patrícia Lima", score: "" },
-    { rank: "05", player: "Carla Martins", score: "" },
-  ];
-  // Intermediário
-  const rankingsIntermediary = [
-    { rank: "01", player: "Mariana Ribeiro", score: "" },
-    { rank: "02", player: "Fernanda Souza", score: "" },
-    { rank: "03", player: "Juliana Costa", score: "" },
-    { rank: "04", player: "Patrícia Lima", score: "" },
-    { rank: "05", player: "Carla Martins", score: "" },
-  ];
-  // Avançado
-  const rankingsAdvanced = [
-    { rank: "01", player: "Mariana Ribeiro", score: "" },
-    { rank: "02", player: "Fernanda Souza", score: "" },
-    { rank: "03", player: "Juliana Costa", score: "" },
-    { rank: "04", player: "Patrícia Lima", score: "" },
-    { rank: "05", player: "Carla Martins", score: "" },
-  ];
+  const [newsList, setNewsList] = useState<NewsItem[]>([]);
+  const [latestMes, setLatestMes] = useState<string>("");
+  const [rankingData, setRankingData] = useState<Record<string, RankingItem[]>>(
+    {}
+  );
+  const [desafios, setDesafios] = useState<UiDesafio[]>([]);
+  const [faqs, setFaqs] = useState<FaqItem[]>([]);
+  const [banners, setBanners] = useState<string[]>([]);
 
-  // ======= Desafios ========
-  const challenges = [
-    {
-      category: "Avançado",
-      playerOne: "Lucas Almeida",
-      playerOneInfo: "Tennis Point",
-      playerOneImage: "/beach-tennis.webp",
-      playerTwo: "Bruno Costa",
-      playerTwoInfo: "Arena Top Spin",
-      playerTwoImage: "/beach-tennis.webp",
-    },
-    {
-      category: "Avançado",
-      playerOne: "Lucas Almeida",
-      playerOneInfo: "Tennis Point",
-      playerOneImage: "/beach-tennis.webp",
-      playerTwo: "Bruno Costa",
-      playerTwoInfo: "Arena Top Spin",
-      playerTwoImage: "/beach-tennis.webp",
-    },
-    {
-      category: "Avançado",
-      playerOne: "Lucas Almeida",
-      playerOneInfo: "Tennis Point",
-      playerOneImage: "/beach-tennis.webp",
-      playerTwo: "Bruno Costa",
-      playerTwoInfo: "Arena Top Spin",
-      playerTwoImage: "/beach-tennis.webp",
-    },
-  ];
+  useEffect(() => {
+    axios
+      .get<{ data: NewsItem[] }>(`${API_URL}/items/Noticias`, {
+        params: {
+          fields:
+            "id,slug,tag.id,tag.nome,titulo,subtitulo,imagem,artigo,date_created",
+          filter: { status: { _eq: "published" } },
+          sort: "-date_created",
+          limit: 4,
+        },
+      })
+      .then((res) => setNewsList(res.data.data))
+      .catch(console.error);
 
-  // ======= Perguntas =======
-  const faqs = [
-    {
-      question: "O que é o Top 10?",
-      answer:
-        "É uma empresa familiar que promove eventos esportivos, especificamente o tênis, tais como: torneio, aulas, clínicas, ranking e mais...",
-    },
-    {
-      question: "O que é RGTA?",
-      answer:
-        "Ranking geral de tênis amador, é um projeto contínuo de competição. Cada tenista é informado de forma clara e objetiva sua categoria, posição e pontuação.",
-    },
-    {
-      question: "Como faço para participar do Ranking?",
-      answer:
-        "Você precisa se inscrever, inscrição aberta o ano todo, será realizada uma entrevista com o professor para avaliar a categoria.",
-    },
-    {
-      question: "Preciso ser de Caraguá para participar do RGTA?",
-      answer:
-        "Não! O RGTA é um ranking aberto para todos tenistas amadores.",
-    },
-    {
-      question: "Como e onde acontece o Ranking?",
-      answer:
-        "O RGTA acontece através de desafios, o local é a critério dos participantes, com aviso prévio a nossa equipe, temos convênio com algumas academias.",
-    },
-    {
-      question: "Como posso sugerir eventos ou enviar notícias para o site?",
-      answer:
-        "Aqui mesmo pelo site, pelo WhatsApp, suas informações e sugestões serão bem-vindas, juntos vamos mais longe!",
-    },
-  ];
+    axios
+      .get<{ data: { mes: string }[] }>(`${API_URL}/items/Rankings`, {
+        params: { fields: "mes", filter: { status: { _eq: "published" } } },
+      })
+      .then((res) => {
+        const meses = Array.from(new Set(res.data.data.map((r) => r.mes))).sort(
+          (a, b) => b.localeCompare(a)
+        );
+        if (meses.length) setLatestMes(meses[0]);
+      })
+      .catch(console.error);
+
+    const now = new Date().toISOString();
+    axios
+      .get<{ data: RawDesafio[] }>(`${API_URL}/items/Desafios`, {
+        params: {
+          fields: [
+            "id",
+            "categoria.nome",
+            "datahora",
+            "votos_1",
+            "votos_2",
+            "jogador_1.nome",
+            "jogador_1.representacao.nome",
+            "jogador_1.foto.id",
+            "jogador_2.nome",
+            "jogador_2.representacao.nome",
+            "jogador_2.foto.id",
+          ].join(","),
+          "filter[status][_eq]": "published",
+          "filter[datahora][_gte]": now,
+          sort: "datahora",
+          limit: 3,
+        },
+      })
+      .then((res) =>
+        setDesafios(
+          res.data.data.map((item) => {
+            const f1 = item.jogador_1.foto?.id;
+            const f2 = item.jogador_2.foto?.id;
+            return {
+              id: item.id,
+              category: item.categoria.nome,
+              dateTime: item.datahora,
+              votesOne: Number(item.votos_1) || 0,
+              votesTwo: Number(item.votos_2) || 0,
+              playerOne: item.jogador_1.nome,
+              playerOneInfo: item.jogador_1.representacao.nome,
+              playerOneImage: f1 ? `${API_URL}/assets/${f1}` : "/fallback.jpg",
+              playerTwo: item.jogador_2.nome,
+              playerTwoInfo: item.jogador_2.representacao.nome,
+              playerTwoImage: f2 ? `${API_URL}/assets/${f2}` : "/fallback.jpg",
+            };
+          })
+        )
+      )
+      .catch(console.error);
+
+    axios
+      .get<{ data: FaqItem[] }>(`${API_URL}/items/Faqs`, {
+        params: {
+          fields: "pergunta,resposta",
+          filter: { status: { _eq: "published" } },
+          sort: "sort",
+        },
+      })
+      .then((res) => setFaqs(res.data.data))
+      .catch(console.error);
+
+    axios
+      .get<{ data: { imagem: { id: string } }[] }>(`${API_URL}/items/Banner`, {
+        params: { fields: "imagem.id", filter: { status: { _eq: "published" } } },
+      })
+      .then((res) =>
+        setBanners(res.data.data.map((b) => `${API_URL}/assets/${b.imagem.id}`))
+      )
+      .catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    if (!latestMes) return;
+    categorias.forEach((cat) => {
+      axios
+        .get<{ data: RankingItem[] }>(`${API_URL}/items/Rankings`, {
+          params: {
+            fields: "id,pontos,jogador.nome",
+            filter: {
+              status: { _eq: "published" },
+              mes: { _eq: latestMes },
+              categoria: { nome: { _eq: cat } },
+            },
+            sort: "-pontos",
+            limit: 5,
+          },
+        })
+        .then((res) =>
+          setRankingData((prev) => ({ ...prev, [cat]: res.data.data }))
+        )
+        .catch(console.error);
+    });
+  }, [latestMes]);
+
+  const featured = newsList.slice(0, 1);
+  const side = newsList.slice(1);
+
   return (
     <section className="bg-[var(--background-color)]">
       <section className="flex flex-col gap-5">
         <Carousel
-          swipeable={true}
-          draggable={true}
-          ssr={true}
-          infinite={true}
-          renderDotsOutside={true}
-          autoPlay={false}
+          swipeable
+          draggable
+          ssr
+          infinite
           arrows
-          dotListClass="custom-dot-list-style"
           responsive={responsiveHero}
         >
-          <div
-            className="bg-cover bg-center w-full flex justify-center items-center h-[400px] lg:h-[820px]"
-            style={{
-              backgroundImage:
-                "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/beach-tennis.webp')",
-            }}
-          >
-            <h1 className="text-[2rem] lg:text-[4rem] font-bold text-white text-center container">
-              Slide 01
-            </h1>
-          </div>
-          <div
-            className="bg-cover bg-center w-full flex justify-center items-center h-[400px] lg:h-[820px]"
-            style={{
-              backgroundImage:
-                "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/beach-tennis.webp')",
-            }}
-          >
-            <h1 className="text-[2rem] lg:text-[4rem] font-bold text-white text-center container">
-              Slide 02
-            </h1>
-          </div>
-          <div
-            className="bg-cover bg-center w-full flex justify-center items-center h-[400px] lg:h-[820px]"
-            style={{
-              backgroundImage:
-                "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/beach-tennis.webp')",
-            }}
-          >
-            <h1 className="text-[2rem] lg:text-[4rem] font-bold text-white text-center container">
-              Slide 03
-            </h1>
-          </div>
+          {banners.map((src, i) => (
+            <div
+              key={i}
+              className="bg-cover bg-center w-full flex justify-center items-center h-[400px] lg:h-[820px]"
+              style={{ backgroundImage: `url('${src}')` }}
+            />
+          ))}
         </Carousel>
         <Carousel
-          infinite={true}
+          infinite
           partialVisible={false}
           arrows={false}
           swipeable={false}
-          autoPlay={true}
+          autoPlay
           autoPlaySpeed={1}
           transitionDuration={1000}
           customTransition="transform 1000ms linear"
           draggable={false}
-          keyBoardControl={true}
+          keyBoardControl
           responsive={responsiveSponsor}
         >
           <div className="w-[130px] h-[60px] aspect-[1/1] relative">
@@ -317,7 +308,7 @@ export default function Home() {
               className="object-cover object-center rounded-[6px]"
             />
           </div>
-          <div className="w-[130px] h-[60px] aspect-[1/1] relative">
+          <div className="w-[130px] h-[60px] aspect_[1/1] relative">
             <Image
               src="/sponsors/mobicell.png"
               alt="project-image"
@@ -325,201 +316,101 @@ export default function Home() {
               className="object-cover object-center rounded-[6px]"
             />
           </div>
-          <div className="w-[130px] h-[60px] aspect-[1/1] relative">
+          <div className="w_[130px] h_[60px] aspect_[1/1] relative">
             <Image
               src="/sponsors/mrd-projetos-construcoes.png"
               alt="project-image"
               fill
-              className="object-cover object-center rounded-[6px]"
+              className="object-cover object-center rounded_[6px]"
             />
           </div>
-          <div className="w-[130px] h-[60px] aspect-[1/1] relative">
+          <div className="w_[130px] h_[60px] aspect_[1/1] relative">
             <Image
               src="/sponsors/tata-climatizacao.png"
               alt="project-image"
               fill
-              className="object-cover object-center rounded-[6px]"
+              className="object-cover object-center rounded_[6px]"
             />
           </div>
-          <div className="w-[130px] h-[60px] aspect-[1/1] relative">
+          <div className="w_[130px] h_[60px] aspect_[1/1] relative">
             <Image
               src="/sponsors/universo-motos.png"
               alt="project-image"
               fill
-              className="object-cover object-center rounded-[6px]"
+              className="object-cover object-center rounded_[6px]"
             />
           </div>
-          <div className="w-[130px] h-[60px] aspect-[1/1] relative">
+          <div className="w_[130px] h_[60px] aspect_[1/1] relative">
             <Image
               src="/sponsors/uroproct.webp"
               alt="project-image"
               fill
-              className="object-cover object-center rounded-[6px]"
+              className="object-cover object-center rounded_[6px]"
             />
           </div>
         </Carousel>
       </section>
 
-      {/* Primeira Parte */}
       <section className="container sectionSpacing">
-        {/* Notícias */}
         <div className="flex flex-col gap-5 lg:gap-10">
           <h2 className="sectionHeading">Fique por dentro</h2>
-          {/* Notícias em destaque */}
           <div className="grid newsGrid gap-5">
-            {featuredNews.map((news, index) => (
-              <News
-                key={`featured-${index}`}
-                title={news.title}
-                description={news.description}
-                date={news.date}
-                image={news.image}
-              />
+            {featured.map((n) => (
+              <News key={n.id} {...n} />
             ))}
-
             <div className="flex flex-col gap-5">
-              {sideNews.map((news, index) => (
-                <News
-                  key={`side-${index}`}
-                  variant="horizontal"
-                  title={news.title}
-                  description={news.description}
-                  date={news.date}
-                  image={news.image}
-                />
+              {side.map((n) => (
+                <News key={n.id} variant="horizontal" {...n} />
               ))}
             </div>
           </div>
           <div className="flex justify-center">
-            <Link href={"/news"}>
+            <Link href="/news">
               <Button>Ver mais</Button>
             </Link>
           </div>
         </div>
-        {/* Rankings */}
-        <div className="flex flex-col gap-5 lg:gap-10">
+
+        <div className="flex flex-col gap-5 lg:gap-10 mt-12">
           <h2 className="sectionHeading">Ranking Atual</h2>
-          {/* Tabela de Rankings */}
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-            {/* Ranking Feminino */}
-            <div className="flex flex-col gap-5">
-              <p className="text-base font-bold text-[var(--secondary-color)]">
-                Feminino
-              </p>
-              <div>
-                <div className="flex justify-between px-[14px]">
-                  <p className="font-bold text-sm text-[var(--dark-gray)]">
-                    RK
-                  </p>
-                  <p className="font-bold text-sm text-[var(--dark-gray)]">
-                    Jogador
-                  </p>
-                </div>
-                <div className="flex flex-col gap-2">
-                  {rankingsFemale.map((item, index) => (
-                    <Ranking
-                      key={index}
-                      variant="compact"
-                      rank={item.rank}
-                      player={item.player}
-                      score={item.score}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-            {/* Ranking Principiante */}
-            <div className="flex flex-col gap-5">
-              <p className="text-base font-bold text-[var(--secondary-color)]">
-                Principiante
-              </p>
-              <div>
-                <div className="flex justify-between px-[14px]">
-                  <p className="font-bold text-sm text-[var(--dark-gray)]">
-                    RK
-                  </p>
-                  <p className="font-bold text-sm text-[var(--dark-gray)]">
-                    Jogador
-                  </p>
-                </div>
-                <div className="flex flex-col gap-2">
+            {categorias.map((cat) => (
+              <div key={cat} className="flex flex-col gap-5">
+                <p className="text-base font-bold text-[var(--secondary-color)]">
+                  {cat}
+                </p>
+                <div>
+                  <div className="flex justify-between px-[14px]">
+                    <p className="font-bold text-sm text-[var(--dark-gray)]">
+                      RK
+                    </p>
+                    <p className="font-bold text-sm text-[var(--dark-gray)]">
+                      Jogador
+                    </p>
+                  </div>
                   <div className="flex flex-col gap-2">
-                    {rankingsBeginner.map((item, index) => (
+                    {(rankingData[cat] || []).map((item, i) => (
                       <Ranking
-                        key={index}
+                        key={item.id}
                         variant="compact"
-                        rank={item.rank}
-                        player={item.player}
-                        score={item.score}
+                        rank={(i + 1).toString().padStart(2, "0")}
+                        player={item.jogador.nome}
+                        score={item.pontos.toString()}
                       />
                     ))}
                   </div>
                 </div>
               </div>
-            </div>
-            {/* Ranking Intermediário */}
-            <div className="flex flex-col gap-5">
-              <p className="text-base font-bold text-[var(--secondary-color)]">
-                Intermediário
-              </p>
-              <div>
-                <div className="flex justify-between px-[14px]">
-                  <p className="font-bold text-sm text-[var(--dark-gray)]">
-                    RK
-                  </p>
-                  <p className="font-bold text-sm text-[var(--dark-gray)]">
-                    Jogador
-                  </p>
-                </div>
-                <div className="flex flex-col gap-2">
-                  {rankingsIntermediary.map((item, index) => (
-                    <Ranking
-                      key={index}
-                      variant="compact"
-                      rank={item.rank}
-                      player={item.player}
-                      score={item.score}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-            {/* Ranking Avançado */}
-            <div className="flex flex-col gap-5">
-              <p className="text-base font-bold text-[var(--secondary-color)]">
-                Avançado
-              </p>
-              <div>
-                <div className="flex justify-between px-[14px]">
-                  <p className="font-bold text-sm text-[var(--dark-gray)]">
-                    RK
-                  </p>
-                  <p className="font-bold text-sm text-[var(--dark-gray)]">
-                    Jogador
-                  </p>
-                </div>
-                <div className="flex flex-col gap-2">
-                  {rankingsAdvanced.map((item, index) => (
-                    <Ranking
-                      key={index}
-                      variant="compact"
-                      rank={item.rank}
-                      player={item.player}
-                      score={item.score}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
           <div className="flex justify-center">
-            <Link href={"/ranking"}>
+            <Link href="/ranking">
               <Button>Ver mais</Button>
             </Link>
           </div>
         </div>
       </section>
-      {/* CTA */}
+
       <section className="bg-[var(--secondary-color)] py-[60px]">
         <div className="container flex justify-center items-center flex-col lg:flex-row gap-5">
           <p className="text-2xl text-center font-bold text-[var(--text-white)]">
@@ -531,37 +422,42 @@ export default function Home() {
           </button>
         </div>
       </section>
-      {/* Segunda Parte */}
+
       <section className="container sectionSpacing">
-        {/* Desafios */}
         <div className="flex flex-col gap-5 lg:gap-10">
           <h2 className="sectionHeading">Topa um desafio?</h2>
           <div className="flex flex-col gap-5">
-            {challenges.map((challenge, index) => (
+            {desafios.map((c) => (
               <Challenge
-                key={index}
-                category={challenge.category}
-                playerOne={challenge.playerOne}
-                playerOneInfo={challenge.playerOneInfo}
-                playerOneImage={challenge.playerOneImage}
-                playerTwo={challenge.playerTwo}
-                playerTwoInfo={challenge.playerTwoInfo}
-                playerTwoImage={challenge.playerTwoImage}
+                key={c.id}
+                category={c.category}
+                dateTime={c.dateTime}
+                votesOne={c.votesOne}
+                votesTwo={c.votesTwo}
+                voted={null}
+                canVote={false}
+                onVote={() => {}}
+                playerOne={c.playerOne}
+                playerOneInfo={c.playerOneInfo}
+                playerOneImage={c.playerOneImage}
+                playerTwo={c.playerTwo}
+                playerTwoInfo={c.playerTwoInfo}
+                playerTwoImage={c.playerTwoImage}
               />
             ))}
           </div>
           <div className="flex justify-center">
-            <Link href={"/challenges"}>
+            <Link href="/challenges">
               <Button>Ver mais</Button>
             </Link>
           </div>
         </div>
-        {/* FAQ */}
-        <div className="flex flex-col gap-5 lg:gap-10">
+
+        <div className="flex flex-col gap-5 lg:gap-10 mt-12">
           <h2 className="sectionHeading">Perguntas Frequentes</h2>
           <div className="grid w-full gap-5 lg:grid-cols-2 sm:gap-x-7 items-start">
-            {faqs.map((faq) => (
-              <Faq key={faq.question} {...faq} />
+            {faqs.map((f) => (
+              <Faq key={f.pergunta} question={f.pergunta} answer={f.resposta} />
             ))}
           </div>
         </div>

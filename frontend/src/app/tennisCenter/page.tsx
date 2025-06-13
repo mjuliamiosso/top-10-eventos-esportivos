@@ -1,25 +1,42 @@
 "use client";
 
-import Button from "@/components/common/Button";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import Image from "next/image";
-import React from "react";
-import { FaPlus } from "react-icons/fa";
 import LightGallery from "lightgallery/react";
 import lgThumbnail from "lightgallery/plugins/thumbnail";
 import lgZoom from "lightgallery/plugins/zoom";
 import "lightgallery/css/lightgallery.css";
 import "lightgallery/css/lg-zoom.css";
 import "lightgallery/css/lg-thumbnail.css";
+import Button from "@/components/common/Button";
+import { FaPlus } from "react-icons/fa";
 
-const page = () => {
-  // Imagens
-  const images = [
-    "/beach-tennis.webp",
-    "/beach-tennis.webp",
-    "/beach-tennis.webp",
-    "/beach-tennis.webp",
-    "/beach-tennis.webp",
-  ];
+const API_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
+
+type ImagemItem = {
+  id: string;
+  imagem: string | null;
+};
+
+export default function TennisCenterPage() {
+  const [imagens, setImagens] = useState<ImagemItem[]>([]);
+  const [limit, setLimit] = useState(6);
+
+  useEffect(() => {
+    axios
+      .get<{ data: ImagemItem[] }>(`${API_URL}/items/Tennis_Center`, {
+        params: {
+          fields: "id,imagem",
+          "filter[status][_eq]": "published",
+          sort: "-date_created",
+          limit,
+        },
+      })
+      .then((res) => setImagens(res.data.data))
+      .catch(console.error);
+  }, [limit]);
+
   return (
     <section className="bg-[var(--background-color)]">
       <div className="container sectionSpacing">
@@ -27,36 +44,37 @@ const page = () => {
         <LightGallery
           speed={500}
           plugins={[lgThumbnail, lgZoom]}
-          elementClassNames="
-            grid 
-            grid-cols-3
-            gap-[8px]
-            lg:gap-5
-          "
+          elementClassNames="grid grid-cols-3 gap-[8px] lg:gap-5"
         >
-          {images.map((src, i) => (
-            <a
-              key={i}
-              href={src}
-              className="block relative overflow-hidden rounded-lg aspect-square"
-            >
-              <Image
-                src={src}
-                alt={`Imagem ${i + 1}`}
-                fill
-                className="rounded-lg hover:scale-105 transition-transform duration-300 object-cover"
-              />
-            </a>
-          ))}
+          {imagens
+            .filter((item) => item.imagem)
+            .map((item, i) => {
+              const url = `${API_URL}/assets/${item.imagem}`;
+              return (
+                <a
+                  key={item.id}
+                  href={url}
+                  className="block relative overflow-hidden rounded-lg aspect-square"
+                >
+                  <Image
+                    src={url}
+                    alt={`Imagem ${i + 1}`}
+                    fill
+                    unoptimized
+                    className="rounded-lg hover:scale-105 transition-transform duration-300 object-cover"
+                  />
+                </a>
+              );
+            })}
         </LightGallery>
-        <div className="flex justify-center">
-          <Button>
-            <FaPlus /> Carregar mais
-          </Button>
-        </div>
+        {imagens.length === limit && (
+          <div className="flex justify-center mt-4">
+            <Button onClick={() => setLimit((prev) => prev + 6)}>
+              <FaPlus /> Carregar mais
+            </Button>
+          </div>
+        )}
       </div>
     </section>
   );
-};
-
-export default page;
+}
