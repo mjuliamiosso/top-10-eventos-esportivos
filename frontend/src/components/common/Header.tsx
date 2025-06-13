@@ -9,10 +9,10 @@ const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="bg-[var(--primary-color)] px-5 py-2.5 text-[var(--text-white)] relative z-5">
+    <header className="bg-[var(--primary-color)] px-5 py-4 text-[var(--text-white)] relative z-5">
       <div className="container px-5">
         <div className="flex items-center justify-between">
-          <Image src="/logo.svg" width={141} height={66} alt="top-10-logo" />
+          <Image src="/logo.png" width={141} height={66} alt="top-10-logo" />
 
           {/* Ícone do menu no mobile */}
           {!menuOpen && (
@@ -26,14 +26,14 @@ const Header = () => {
           )}
 
           {/* Menu no desktop */}
-          <nav className="hidden lg:flex gap-5 font-bold">
+          <nav className="hidden lg:flex gap-5 font-medium">
             <Link href="/">Início</Link>
-            <Link href="/challenges">Desafios</Link>
+            <Link href="/desafios">Desafios</Link>
             <Link href="/ranking">Ranking</Link>
-            <Link href="/gallery">Galeria</Link>
+            <Link href="/galeria">Galeria</Link>
             <Link href="/tennisCenter">Tennis Center</Link>
             <Link href="/noticias">Notícias</Link>
-            <Link href="/aboutUS">Quem Somos</Link>
+            <Link href="/sobreNos">Quem Somos</Link>
           </nav>
         </div>
 
