@@ -153,7 +153,7 @@ export default function Page() {
                     alt=""
                     fill
                     unoptimized
-                    className="object-cover object-center"
+                    className="object-cover hover:scale-105 transition-all duration-300 ease-in-out object-center"
                   />
                 </a>
               );

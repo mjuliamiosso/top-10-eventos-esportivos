@@ -165,13 +165,13 @@ export default function Page() {
             <div className="lg:flex gap-5 hidden">
               <button
                 onClick={() => carouselRefEvent.current?.previous()}
-                className="bg-white text-black rounded-full p-2 hover:bg-gray-100"
+                className="cursor-pointer bg-white text-black rounded-full p-2 hover:text-[var(--secondary-color)] transition-all duration-300 ease-in-out"
               >
                 <IoIosArrowBack />
               </button>
               <button
                 onClick={() => carouselRefEvent.current?.next()}
-                className="bg-white text-black rounded-full p-2 hover:bg-gray-100"
+                className="cursor-pointer bg-white text-black rounded-full p-2 hover:text-[var(--secondary-color)] transition-all duration-300 ease-in-out"
               >
                 <IoIosArrowForward />
               </button>
@@ -212,13 +212,13 @@ export default function Page() {
             <div className="lg:flex gap-5 hidden">
               <button
                 onClick={() => carouselRefInterview.current?.previous()}
-                className="bg-white text-black rounded-full p-2 hover:bg-gray-100"
+                className="cursor-pointer bg-white text-black rounded-full p-2 hover:text-[var(--secondary-color)] transition-all duration-300 ease-in-out"
               >
                 <IoIosArrowBack />
               </button>
               <button
                 onClick={() => carouselRefInterview.current?.next()}
-                className="bg-white text-black rounded-full p-2 hover:bg-gray-100"
+                className="cursor-pointer bg-white text-black rounded-full p-2  hover:text-[var(--secondary-color)] transition-all duration-300 ease-in-out"
               >
                 <IoIosArrowForward />
               </button>
