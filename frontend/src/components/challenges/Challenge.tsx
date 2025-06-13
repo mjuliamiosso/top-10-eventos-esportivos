@@ -1,131 +1,125 @@
+// src/components/challenges/Challenge.tsx
 "use client";
 
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 import Image from "next/image";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 
 interface ChallengeProps {
   category: string;
+  dateTime: string;
   playerOne: string;
   playerOneInfo: string;
   playerOneImage: string;
   playerTwo: string;
   playerTwoInfo: string;
   playerTwoImage: string;
+  votesOne: number;
+  votesTwo: number;
+  voted: "one" | "two" | null;
+  canVote: boolean;
+  onVote: (player: "one" | "two") => void;
 }
 
 const Challenge: FC<ChallengeProps> = ({
   category,
+  dateTime,
   playerOne,
   playerOneInfo,
   playerOneImage,
   playerTwo,
   playerTwoInfo,
   playerTwoImage,
+  votesOne,
+  votesTwo,
+  voted,
+  canVote,
+  onVote,
 }) => {
-  const [votes, setVotes] = useState({ one: 0, two: 0 });
-  const [voted, setVoted] = useState<"one" | "two" | null>(null);
-
-  const handleVote = (player: "one" | "two") => {
-    if (voted) return; // impede votar mais de uma vez
-    setVotes((prev) => ({
-      ...prev,
-      [player]: prev[player] + 1,
-    }));
-    setVoted(player);
-  };
-
-  const totalVotes = votes.one + votes.two;
-  const percentOne = totalVotes === 0 ? 50 : (votes.one / totalVotes) * 100;
-  const percentTwo = totalVotes === 0 ? 50 : (votes.two / totalVotes) * 100;
+  // Total e porcentagens ainda estão aqui caso queira usar futuramente
+  const total = votesOne + votesTwo;
+  const pctOne = total === 0 ? 50 : (votesOne / total) * 100;
+  const pctTwo = total === 0 ? 50 : (votesTwo / total) * 100;
 
   return (
     <div className="p-4 space-y-4">
-      <p className="lg:hidden block text-base font-bold text-[var(--grea-color)] uppercase text-center">
+      <p className="lg:hidden text-center font-bold uppercase text-[var(--gray-color)]">
         {category}
       </p>
+      <p className="text-center text-xs text-[var(--gray-color)]">
+        {new Date(dateTime).toLocaleString()}
+      </p>
 
-      {/* Cabeçalho dos jogadores */}
       <div className="flex items-center gap-2 justify-between lg:justify-start lg:gap-5">
-        {/* Imagem 1 */}
-        <div className="aspect-[1/1] relative h-[160px] w-[100px] md:h-[200px] md:w-[140px]">
+        <div className="relative w-[100px] h-[160px] md:w-[140px] md:h-[200px]">
           <Image
             src={playerOneImage}
-            alt={"player-one-image"}
+            alt={playerOne}
             fill
-            className="object-cover object-center rounded-[6px]"
+            className="rounded-[6px] object-cover"
           />
         </div>
 
-        {/* Infos */}
         <div className="flex flex-col items-center text-center lg:flex-row lg:justify-between lg:w-full">
-          {/* Info jogador 1 */}
-          <div className="lg:max-w-[250px] lg:w-full text-start">
-            <p className="font-bold text-[var(--text-color)] uppercase text-base lg:text-2xl">
+          <div className="text-start lg:max-w-[250px]">
+            <p className="font-bold uppercase text-base lg:text-2xl">
               {playerOne}
             </p>
-            <p className="text-[0.75rem] text-[var(--gray-color)] uppercase">
+            <p className="uppercase text-[0.75rem] text-[var(--gray-color)]">
               {playerOneInfo}
             </p>
           </div>
-          {/* Categoria */}
           <div>
-            <p className="hidden lg:block text-base font-bold text-[var(--gray-color)] uppercase">
+            <p className="hidden lg:block uppercase text-[var(--gray-color)] font-bold">
               {category}
             </p>
-            <p className="text-[2rem] lg:text-[2.25rem] text-[var(--text-color)] font-bold">
-              VS
-            </p>
+            <p className="text-2xl lg:text-[2.25rem] font-bold">VS</p>
           </div>
-          {/* Info jogador 2 */}
-          <div className="lg:max-w-[250px] lg:w-full text-end">
-            <p className="font-bold text-[var(--text-color)] uppercase text-base lg:text-2xl">
+          <div className="text-end lg:max-w-[250px]">
+            <p className="font-bold uppercase text-base lg:text-2xl">
               {playerTwo}
             </p>
-            <p className="text-[0.75rem] text-[var(--gray-color)] uppercase">
+            <p className="uppercase text-[0.75rem] text-[var(--gray-color)]">
               {playerTwoInfo}
             </p>
           </div>
         </div>
 
-        {/* Imagem 2 */}
-        <div className="aspect-[1/1] relative h-[160px] w-[100px] md:h-[200px] md:w-[140px]">
+        <div className="relative w-[100px] h-[160px] md:w-[140px] md:h-[200px]">
           <Image
             src={playerTwoImage}
-            alt={"player-two-image"}
+            alt={playerTwo}
             fill
-            className="object-cover object-center rounded-[6px]"
+            className="rounded-[6px] object-cover"
           />
         </div>
       </div>
 
-      {/* Enquete de votação */}
-      <div className="flex items-center justify-between gap-4 mt-4">
-        {/* Botão coração jogador 1 */}
-        <button onClick={() => handleVote("one")} disabled={!!voted}>
-          {voted === "one" ? (
-            <FaHeart className="text-[var(--red-color)] text-2xl" />
-          ) : (
-            <FaRegHeart className="text-[var(--gray-color)] text-2xl hover:text-[var(--red-color)] transition cursor-pointer" />
-          )}
-        </button>
-
-        {/* Barra de progresso */}
-        <div className="flex-1 h-[6px] bg-[#d9395444] rounded-full overflow-hidden relative">
-          <div
-            className="bg-[var(--red-color)] h-full absolute left-0 top-0 transition-all duration-500 ease-in-out"
-            style={{ width: `${percentOne}%` }}
-          ></div>
+      {/* votos */}
+      <div className="flex items-center justify-between mt-4">
+        {/* esquerda */}
+        <div className="flex items-center gap-2">
+          <button onClick={() => onVote("one")} disabled={!canVote}>
+            {voted === "one" ? (
+              <FaHeart className="text-red-500 text-2xl" />
+            ) : (
+              <FaRegHeart className="text-red-500 text-2xl hover:text-red-600 transition" />
+            )}
+          </button>
+          <span className="text-red-500 font-bold text-lg">{votesOne}</span>
         </div>
 
-        {/* Botão coração jogador 2 */}
-        <button onClick={() => handleVote("two")} disabled={!!voted}>
-          {voted === "two" ? (
-            <FaHeart className="text-[var(--red-color)] text-2xl" />
-          ) : (
-            <FaRegHeart className="text-[var(--gray-color)] text-2xl hover:text-[var(--red-color)] transition cursor-pointer" />
-          )}
-        </button>
+        {/* direita */}
+        <div className="flex items-center gap-2">
+          <span className="text-blue-500 font-bold text-lg">{votesTwo}</span>
+          <button onClick={() => onVote("two")} disabled={!canVote}>
+            {voted === "two" ? (
+              <FaHeart className="text-blue-500 text-2xl" />
+            ) : (
+              <FaRegHeart className="text-blue-500 text-2xl hover:text-blue-600 transition" />
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );
