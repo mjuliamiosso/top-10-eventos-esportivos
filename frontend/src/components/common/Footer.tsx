@@ -7,7 +7,7 @@ const Footer = () => {
   return (
     <footer className="bg-[var(--primary-color)] px-5 py-10 text-[var(--text-white)]">
       <div className="container px-5 flex flex-col items-center text-center lg:flex-row justify-between lg:items-start">
-        <Image src="/logo.svg" width={171} height={80} alt="top-10-logo" />
+        <Image src="/logo.png" width={171} height={80} alt="top-10-logo" />
         <div className="flex flex-col gap-5 lg:flex-row lg:gap-20">
           <div className="flex flex-col gap-5">
             <p className="font-bold text-base uppercase">Links Rápidos</p>
@@ -16,22 +16,22 @@ const Footer = () => {
                 <Link href={"/"}>Início</Link>
               </li>
               <li>
-                <Link href={"./challenges"}>Desafios</Link>
+                <Link href={"./desafios"}>Desafios</Link>
               </li>
               <li>
                 <Link href={"./rankings"}>Ranking</Link>
               </li>
               <li>
-                <Link href={"./gallery"}>Galeria</Link>
+                <Link href={"./galeria"}>Galeria</Link>
               </li>
               <li>
                 <Link href={"./tennisCenter"}>Tennis Center</Link>
               </li>
               <li>
-                <Link href={"./news"}>Notícias</Link>
+                <Link href={"./noticias"}>Notícias</Link>
               </li>
               <li>
-                <Link href={"./aboutUs"}>Quem Somos</Link>
+                <Link href={"./sobreNos"}>Quem Somos</Link>
               </li>
             </ul>
           </div>
