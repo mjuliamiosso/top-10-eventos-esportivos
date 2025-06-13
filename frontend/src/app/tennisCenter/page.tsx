@@ -61,7 +61,7 @@ export default function TennisCenterPage() {
                     alt={`Imagem ${i + 1}`}
                     fill
                     unoptimized
-                    className="rounded-lg hover:scale-105 transition-transform duration-300 object-cover"
+                    className="rounded-lg hover:scale-105 transition-all duration-300 ease-in-out object-cover"
                   />
                 </a>
               );
