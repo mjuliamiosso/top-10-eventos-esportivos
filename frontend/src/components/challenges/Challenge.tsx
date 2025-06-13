@@ -42,16 +42,20 @@ const Challenge: FC<ChallengeProps> = ({
   const pctTwo = total === 0 ? 50 : (votesTwo / total) * 100;
 
   return (
-    <div className="p-4 space-y-4">
-      <p className="lg:hidden text-center font-bold uppercase text-[var(--gray-color)]">
-        {category}
-      </p>
-      <p className="text-center text-xs text-[var(--gray-color)]">
-        {new Date(dateTime).toLocaleString()}
-      </p>
+    <div className="space-y-4">
+      {/* Categoria + data */}
+      <div className="flex flex-col">
+        <p className="lg:hidden text-center font-bold uppercase text-[var(--gray-color)]">
+          {category}
+        </p>
+        <p className="text-center text-xs text-[var(--gray-color)] lg:hidden">
+          {new Date(dateTime).toLocaleString()}
+        </p>
+      </div>
 
       <div className="flex items-center gap-2 justify-between lg:justify-start lg:gap-5">
-        <div className="relative w-[100px] h-[160px] md:w-[140px] md:h-[200px]">
+        <div className="relative w-[100px] h-[160px] md:w-[140px] md:h-[200px] lg:h-[240px] lg:w-[180px]">
+          {/* Jogador 1 Imagem */}
           <Image
             src={playerOneImage}
             alt={playerOne}
@@ -61,7 +65,8 @@ const Challenge: FC<ChallengeProps> = ({
         </div>
 
         <div className="flex flex-col items-center text-center lg:flex-row lg:justify-between lg:w-full">
-          <div className="text-start lg:max-w-[250px]">
+          {/* Jogador 1 Dados */}
+          <div className="text-center lg:text-left lg:max-w-[250px] lg:w-full">
             <p className="font-bold uppercase text-base lg:text-2xl">
               {playerOne}
             </p>
@@ -69,13 +74,18 @@ const Challenge: FC<ChallengeProps> = ({
               {playerOneInfo}
             </p>
           </div>
+          {/* Categoria */}
           <div>
             <p className="hidden lg:block uppercase text-[var(--gray-color)] font-bold">
               {category}
             </p>
             <p className="text-2xl lg:text-[2.25rem] font-bold">VS</p>
+            <p className="text-center text-xs text-[var(--gray-color)] hidden lg:block">
+              {new Date(dateTime).toLocaleString()}
+            </p>
           </div>
-          <div className="text-end lg:max-w-[250px]">
+          {/* Jogador 2 Dados */}
+          <div className="text-center lg:text-end lg:max-w-[250px] lg:w-full">
             <p className="font-bold uppercase text-base lg:text-2xl">
               {playerTwo}
             </p>
@@ -84,8 +94,8 @@ const Challenge: FC<ChallengeProps> = ({
             </p>
           </div>
         </div>
-
-        <div className="relative w-[100px] h-[160px] md:w-[140px] md:h-[200px]">
+        {/* Jogador 2 Imagem */}
+        <div className="relative w-[100px] h-[160px] md:w-[140px] md:h-[200px] lg:h-[240px] lg:w-[180px]">
           <Image
             src={playerTwoImage}
             alt={playerTwo}
@@ -101,22 +111,26 @@ const Challenge: FC<ChallengeProps> = ({
         <div className="flex items-center gap-2">
           <button onClick={() => onVote("one")} disabled={!canVote}>
             {voted === "one" ? (
-              <FaHeart className="text-red-500 text-2xl" />
+              <FaHeart className="text-[var(--red-color)] text-2xl" />
             ) : (
-              <FaRegHeart className="text-red-500 text-2xl hover:text-red-600 transition" />
+              <FaRegHeart className="text-[var(--red-color)] text-2xl cursor-pointer hover:text-[#c91a37] transition-all duration-300 ease-in-out" />
             )}
           </button>
-          <span className="text-red-500 font-bold text-lg">{votesOne}</span>
+          <span className="text-[var(--red-color)] font-bold text-lg">
+            {votesOne}
+          </span>
         </div>
 
         {/* direita */}
         <div className="flex items-center gap-2">
-          <span className="text-blue-500 font-bold text-lg">{votesTwo}</span>
+          <span className="text-[var(--blue-color)] font-bold text-lg">
+            {votesTwo}
+          </span>
           <button onClick={() => onVote("two")} disabled={!canVote}>
             {voted === "two" ? (
-              <FaHeart className="text-blue-500 text-2xl" />
+              <FaHeart className="text-[var(--blue-color)] text-2xl" />
             ) : (
-              <FaRegHeart className="text-blue-500 text-2xl hover:text-blue-600 transition" />
+              <FaRegHeart className="text-[var(--blue-color)] text-2xl cursor-pointer hover:text-[#0c5eac] transition-all duration-300 ease-in-out" />
             )}
           </button>
         </div>
