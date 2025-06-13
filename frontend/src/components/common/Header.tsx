@@ -32,7 +32,7 @@ const Header = () => {
             <Link href="/ranking">Ranking</Link>
             <Link href="/gallery">Galeria</Link>
             <Link href="/tennisCenter">Tennis Center</Link>
-            <Link href="/news">Notícias</Link>
+            <Link href="/noticias">Notícias</Link>
             <Link href="/aboutUS">Quem Somos</Link>
           </nav>
         </div>
