@@ -22,17 +22,19 @@ const Faq: React.FC<FaqProps> = ({ question, answer }) => {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={clsx(
-          "w-full flex justify-between items-center p-[14px] font-semibold text-left cursor-pointer transition-colors duration-300",
+          "w-full flex justify-between items-center p-[14px] font-semibold text-left cursor-pointer transition-all duration-300 ease-in-out",
           isOpen
             ? "text-[var(--secondary-color)]"
-            : "text-[var(--text-color)] hover:text-[var(--secondary-color)]"
+            : "text-[var(--text-color)] hover:text-[var(--secondary-color)] "
         )}
       >
         <span className="text-base leading-relaxed">{question}</span>
         <IoChevronDown
           className={clsx(
             "transition-transform duration-300",
-            isOpen ? "rotate-180 text-[var(--secondary-color)]" : "text-[var(--text-color)]"
+            isOpen
+              ? "rotate-180 text-[var(--secondary-color)]"
+              : "text-[var(--text-color)]"
           )}
         />
       </button>
@@ -44,7 +46,9 @@ const Faq: React.FC<FaqProps> = ({ question, answer }) => {
         )}
         aria-hidden={!isOpen}
       >
-        <p className="text-base leading-relaxed text-[var(--text-color)]">{answer}</p>
+        <p className="text-base leading-relaxed text-[var(--text-color)]">
+          {answer}
+        </p>
       </div>
     </div>
   );
