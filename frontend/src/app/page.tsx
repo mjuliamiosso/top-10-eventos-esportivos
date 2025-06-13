@@ -178,7 +178,10 @@ export default function Home() {
 
     axios
       .get<{ data: { imagem: { id: string } }[] }>(`${API_URL}/items/Banner`, {
-        params: { fields: "imagem.id", filter: { status: { _eq: "published" } } },
+        params: {
+          fields: "imagem.id",
+          filter: { status: { _eq: "published" } },
+        },
       })
       .then((res) =>
         setBanners(res.data.data.map((b) => `${API_URL}/assets/${b.imagem.id}`))
@@ -232,16 +235,16 @@ export default function Home() {
           ))}
         </Carousel>
         <Carousel
-          infinite
+          infinite={true}
           partialVisible={false}
           arrows={false}
           swipeable={false}
-          autoPlay
+          autoPlay={true}
           autoPlaySpeed={1}
           transitionDuration={1000}
           customTransition="transform 1000ms linear"
           draggable={false}
-          keyBoardControl
+          keyBoardControl={true}
           responsive={responsiveSponsor}
         >
           <div className="w-[130px] h-[60px] aspect-[1/1] relative">
@@ -365,7 +368,7 @@ export default function Home() {
             </div>
           </div>
           <div className="flex justify-center">
-            <Link href="/news">
+            <Link href="/noticias">
               <Button>Ver mais</Button>
             </Link>
           </div>
@@ -380,7 +383,7 @@ export default function Home() {
                   {cat}
                 </p>
                 <div>
-                  <div className="flex justify-between px-[14px]">
+                  <div className="flex justify-between px-[14px] mb-2">
                     <p className="font-bold text-sm text-[var(--dark-gray)]">
                       RK
                     </p>
@@ -447,7 +450,7 @@ export default function Home() {
             ))}
           </div>
           <div className="flex justify-center">
-            <Link href="/challenges">
+            <Link href="/desafios">
               <Button>Ver mais</Button>
             </Link>
           </div>
