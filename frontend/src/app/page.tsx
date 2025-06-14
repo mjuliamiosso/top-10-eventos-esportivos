@@ -84,6 +84,22 @@ export default function Home() {
 
   const categorias = ["Feminino", "Principiante", "Intermediário", "Avançado"];
 
+  const sponsors = [
+    "/sponsors/1000-tintas.png",
+    "/sponsors/canto-bravo.png",
+    "/sponsors/digo-tenis.png",
+    "/sponsors/j-bike.png",
+    "/sponsors/joti.png",
+    "/sponsors/leomar.png",
+    "/sponsors/lig-chopp.png",
+    "/sponsors/mega.png",
+    "/sponsors/mobicell.png",
+    "/sponsors/mrd-projetos-construcoes.png",
+    "/sponsors/tata-climatizacao.png",
+    "/sponsors/universo-motos.png",
+    "/sponsors/uroproct.webp",
+  ];
+
   const [newsList, setNewsList] = useState<NewsItem[]>([]);
   const [latestMes, setLatestMes] = useState<string>("");
   const [rankingData, setRankingData] = useState<Record<string, RankingItem[]>>(
@@ -235,122 +251,28 @@ export default function Home() {
           ))}
         </Carousel>
         <Carousel
-          infinite={true}
+          infinite
           partialVisible={false}
           arrows={false}
           swipeable={false}
-          autoPlay={true}
+          autoPlay
           autoPlaySpeed={1}
           transitionDuration={1000}
           customTransition="transform 1000ms linear"
           draggable={false}
-          keyBoardControl={true}
+          keyBoardControl
           responsive={responsiveSponsor}
         >
-          <div className="w-[130px] h-[60px] aspect-[1/1] relative">
-            <Image
-              src="/sponsors/1000-tintas.png"
-              alt="project-image"
-              fill
-              className="object-cover object-center rounded-[6px]"
-            />
-          </div>
-          <div className="w-[130px] h-[60px] aspect-[1/1] relative">
-            <Image
-              src="/sponsors/canto-bravo.png"
-              alt="project-image"
-              fill
-              className="object-cover object-center rounded-[6px]"
-            />
-          </div>
-          <div className="w-[130px] h-[60px] aspect-[1/1] relative">
-            <Image
-              src="/sponsors/digo-tenis.png"
-              alt="project-image"
-              fill
-              className="object-cover object-center rounded-[6px]"
-            />
-          </div>
-          <div className="w-[130px] h-[60px] aspect-[1/1] relative">
-            <Image
-              src="/sponsors/j-bike.png"
-              alt="project-image"
-              fill
-              className="object-cover object-center rounded-[6px]"
-            />
-          </div>
-          <div className="w-[130px] h-[60px] aspect-[1/1] relative">
-            <Image
-              src="/sponsors/joti.png"
-              alt="project-image"
-              fill
-              className="object-cover object-center rounded-[6px]"
-            />
-          </div>
-          <div className="w-[130px] h-[60px] aspect-[1/1] relative">
-            <Image
-              src="/sponsors/leomar.png"
-              alt="project-image"
-              fill
-              className="object-cover object-center rounded-[6px]"
-            />
-          </div>
-          <div className="w-[130px] h-[60px] aspect-[1/1] relative">
-            <Image
-              src="/sponsors/lig-chopp.png"
-              alt="project-image"
-              fill
-              className="object-cover object-center rounded-[6px]"
-            />
-          </div>
-          <div className="w-[130px] h-[60px] aspect-[1/1] relative">
-            <Image
-              src="/sponsors/mega.png"
-              alt="project-image"
-              fill
-              className="object-cover object-center rounded-[6px]"
-            />
-          </div>
-          <div className="w-[130px] h-[60px] aspect_[1/1] relative">
-            <Image
-              src="/sponsors/mobicell.png"
-              alt="project-image"
-              fill
-              className="object-cover object-center rounded-[6px]"
-            />
-          </div>
-          <div className="w_[130px] h_[60px] aspect_[1/1] relative">
-            <Image
-              src="/sponsors/mrd-projetos-construcoes.png"
-              alt="project-image"
-              fill
-              className="object-cover object-center rounded_[6px]"
-            />
-          </div>
-          <div className="w_[130px] h_[60px] aspect_[1/1] relative">
-            <Image
-              src="/sponsors/tata-climatizacao.png"
-              alt="project-image"
-              fill
-              className="object-cover object-center rounded_[6px]"
-            />
-          </div>
-          <div className="w_[130px] h_[60px] aspect_[1/1] relative">
-            <Image
-              src="/sponsors/universo-motos.png"
-              alt="project-image"
-              fill
-              className="object-cover object-center rounded_[6px]"
-            />
-          </div>
-          <div className="w_[130px] h_[60px] aspect_[1/1] relative">
-            <Image
-              src="/sponsors/uroproct.webp"
-              alt="project-image"
-              fill
-              className="object-cover object-center rounded_[6px]"
-            />
-          </div>
+          {sponsors.map((src, i) => (
+            <div key={i} className="w-[130px] h-[60px] aspect-[1/1] relative">
+              <Image
+                src={src}
+                alt="sponsor"
+                fill
+                className="object-cover object-center rounded-[6px]"
+              />
+            </div>
+          ))}
         </Carousel>
       </section>
 
@@ -420,7 +342,7 @@ export default function Home() {
             Pronto pra entrar em quadra? Entre para o Ranking ou agende sua
             aula!
           </p>
-          <button className="rounded-lg cursor-pointer font-bold bg-[var(--text-white))] text-[var(--secondary-color)] px-3 py-2 text-sm lg:px-4 lg:py-3 lg:text-base">
+          <button className="rounded-lg cursor-pointer font-bold bg-[var(--text-white)] text-[var(--secondary-color)] px-3 py-2 text-sm lg:px-4 lg:py-3 lg:text-base">
             Comece Agora
           </button>
         </div>
