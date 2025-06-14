@@ -14,7 +14,7 @@ import Select from "@/components/common/Select";
 import { FaPlus } from "react-icons/fa";
 
 const API_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 6;
 
 type ImagemItem = {
   id: string;
@@ -66,16 +66,24 @@ export default function Page() {
           filter,
           fields: ["id", "imagem", "datahora"],
           sort: ["-datahora"],
-          limit: ITEMS_PER_PAGE,
+          limit: ITEMS_PER_PAGE + 1,
           offset: (pageNum - 1) * ITEMS_PER_PAGE,
         },
       })
       .then((res) => {
         const fetched = res.data.data;
-        setImagens((prev) =>
-          pageNum === 1 ? fetched : [...prev, ...fetched]
-        );
-        setHasMore(fetched.length === ITEMS_PER_PAGE);
+        if (fetched.length > ITEMS_PER_PAGE) {
+          const itemsToShow = fetched.slice(0, ITEMS_PER_PAGE);
+          setImagens((prev) =>
+            pageNum === 1 ? itemsToShow : [...prev, ...itemsToShow]
+          );
+          setHasMore(true);
+        } else {
+          setImagens((prev) =>
+            pageNum === 1 ? fetched : [...prev, ...fetched]
+          );
+          setHasMore(false);
+        }
       })
       .catch(console.error);
   };
@@ -90,11 +98,6 @@ export default function Page() {
     setPage(next);
     fetchPage(next);
   };
-
-  const chunked: ImagemItem[][] = [];
-  for (let i = 0; i < imagens.length; i += ITEMS_PER_PAGE) {
-    chunked.push(imagens.slice(i, i + ITEMS_PER_PAGE));
-  }
 
   return (
     <section className="bg-[var(--background-color)]">
@@ -111,54 +114,28 @@ export default function Page() {
         <LightGallery
           speed={500}
           plugins={[lgThumbnail, lgZoom]}
-          elementClassNames="
-            grid
-            grid-cols-3
-            auto-rows-auto
-            gap-2
-            lg:gap-5
-          "
+          elementClassNames="grid grid-cols-3 gap-[8px] lg:gap-5"
         >
-          {chunked.flatMap((block, b) =>
-            block.map((item, idx) => {
-              const layoutA = [
-                { c1: 1, c2: 2, r1: 1, r2: 3, asp: false },
-                { c1: 2, c2: 3, r1: 1, r2: 2, asp: true },
-                { c1: 3, c2: 4, r1: 1, r2: 2, asp: true },
-                { c1: 2, c2: 3, r1: 2, r2: 3, asp: true },
-                { c1: 3, c2: 4, r1: 2, r2: 3, asp: true },
-              ];
-              const layoutB = [
-                { c1: 1, c2: 2, r1: 1, r2: 2, asp: true },
-                { c1: 2, c2: 3, r1: 1, r2: 2, asp: true },
-                { c1: 1, c2: 2, r1: 2, r2: 3, asp: true },
-                { c1: 2, c2: 3, r1: 2, r2: 3, asp: true },
-                { c1: 3, c2: 4, r1: 1, r2: 3, asp: false },
-              ];
-              const { c1, c2, r1, r2, asp } =
-                b % 2 === 0 ? layoutA[idx] : layoutB[idx];
-              const off = b * 2;
-              const cls = `col-start-${c1} col-end-${c2} row-start-${
-                r1 + off
-              } row-end-${r2 + off} ${asp ? "aspect-square" : ""}`;
+          {imagens
+            .filter((item) => item.imagem)
+            .map((item, i) => {
               const url = `${API_URL}/assets/${item.imagem}`;
               return (
                 <a
                   key={item.id}
                   href={url}
-                  className={`relative overflow-hidden rounded-[6px] ${cls}`}
+                  className="block relative overflow-hidden rounded-[6px] aspect-square"
                 >
                   <Image
                     src={url}
-                    alt=""
+                    alt={`Imagem ${i + 1}`}
                     fill
                     unoptimized
                     className="object-cover hover:scale-105 transition-all duration-300 ease-in-out object-center"
                   />
                 </a>
               );
-            })
-          )}
+            })}
         </LightGallery>
         {hasMore && (
           <div className="flex justify-center mt-4">

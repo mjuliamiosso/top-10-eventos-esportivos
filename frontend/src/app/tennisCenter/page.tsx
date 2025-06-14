@@ -11,18 +11,15 @@ import "lightgallery/css/lg-zoom.css";
 import "lightgallery/css/lg-thumbnail.css";
 import Button from "@/components/common/Button";
 import { FaPlus } from "react-icons/fa";
-
 const API_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
-
 type ImagemItem = {
   id: string;
   imagem: string | null;
 };
-
 export default function TennisCenterPage() {
   const [imagens, setImagens] = useState<ImagemItem[]>([]);
   const [limit, setLimit] = useState(6);
-
+  const [hasMore, setHasMore] = useState(false);
   useEffect(() => {
     axios
       .get<{ data: ImagemItem[] }>(`${API_URL}/items/Tennis_Center`, {
@@ -30,13 +27,21 @@ export default function TennisCenterPage() {
           fields: "id,imagem",
           "filter[status][_eq]": "published",
           sort: "-date_created",
-          limit,
+          limit: limit + 1,
         },
       })
-      .then((res) => setImagens(res.data.data))
+      .then((res) => {
+        const data = res.data.data;
+        if (data.length > limit) {
+          setImagens(data.slice(0, limit));
+          setHasMore(true);
+        } else {
+          setImagens(data);
+          setHasMore(false);
+        }
+      })
       .catch(console.error);
   }, [limit]);
-
   return (
     <section className="bg-[var(--background-color)]">
       <div className="container sectionSpacing">
@@ -67,7 +72,7 @@ export default function TennisCenterPage() {
               );
             })}
         </LightGallery>
-        {imagens.length === limit && (
+        {hasMore && (
           <div className="flex justify-center mt-4">
             <Button onClick={() => setLimit((prev) => prev + 6)}>
               <FaPlus /> Carregar mais
