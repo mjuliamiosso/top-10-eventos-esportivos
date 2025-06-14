@@ -97,7 +97,7 @@ export default function Page() {
       });
 
     axios
-      .get<{ data: HealthItem[] }>(`${API_URL}/items/Saude`, {
+      .get<{ data: Omit<HealthItem, "slug">[] }>(`${API_URL}/items/Saude`, {
         params: {
           fields:
             "id,tag.id,tag.nome,titulo,subtitulo,imagem,artigo,date_created",
@@ -105,7 +105,14 @@ export default function Page() {
           sort: "-date_created",
         },
       })
-      .then((res) => setHealthAll(res.data.data));
+      .then((res) => {
+        const list = res.data.data.map((h) => ({
+          ...h,
+          slug: generateSlug(h.titulo),
+        }));
+        setHealthAll(list);
+      })
+      .catch(console.error);
 
     axios
       .get<{ data: EventItem[] }>(`${API_URL}/items/Eventos`, {

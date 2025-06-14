@@ -7,8 +7,7 @@ import FilterButtons from "@/components/common/FilterButtons";
 import Button from "@/components/common/Button";
 import { FaPlus } from "react-icons/fa";
 
-const API_URL =
-  process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
+const API_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
 const ITEMS_PER_PAGE = 5;
 
 type RawJogador = {
@@ -47,23 +46,23 @@ export default function DesafiosPage() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [filter, setFilter] = useState<"Próximos" | "Últimos">("Próximos");
-  const [userVotes, setUserVotes] = useState<Record<string, "one" | "two" | null>>({});
+  const [userVotes, setUserVotes] = useState<
+    Record<string, "one" | "two" | null>
+  >({});
 
-  // Carregar votos salvos do localStorage na inicialização
   useEffect(() => {
-    const savedVotes = localStorage.getItem('userVotes');
+    const savedVotes = localStorage.getItem("userVotes");
     if (savedVotes) {
       try {
         setUserVotes(JSON.parse(savedVotes));
       } catch (error) {
-        console.error('Erro ao carregar votos salvos:', error);
+        console.error("Erro ao carregar votos salvos:", error);
       }
     }
   }, []);
 
-  // Salvar votos no localStorage sempre que mudar
   useEffect(() => {
-    localStorage.setItem('userVotes', JSON.stringify(userVotes));
+    localStorage.setItem("userVotes", JSON.stringify(userVotes));
   }, [userVotes]);
 
   const fetchPage = (pageNum: number) => {
@@ -96,31 +95,26 @@ export default function DesafiosPage() {
           ...dateFilter,
         },
       })
-      .then(res => {
-        const mapped = res.data.data.map(item => {
+      .then((res) => {
+        const mapped = res.data.data.map((item) => {
           const f1 = item.jogador_1.foto?.id;
           const f2 = item.jogador_2.foto?.id;
           return {
             id: item.id,
             category: item.categoria.nome,
             dateTime: item.datahora,
-            // Garantir que os votos sejam números
             votesOne: Number(item.votos_1) || 0,
             votesTwo: Number(item.votos_2) || 0,
             playerOneName: item.jogador_1.nome,
             playerOneInfo: item.jogador_1.representacao.nome,
-            playerOneImage: f1
-              ? `${API_URL}/assets/${f1}`
-              : "/fallback.jpg",
+            playerOneImage: f1 ? `${API_URL}/assets/${f1}` : "/fallback.jpg",
             playerTwoName: item.jogador_2.nome,
             playerTwoInfo: item.jogador_2.representacao.nome,
-            playerTwoImage: f2
-              ? `${API_URL}/assets/${f2}`
-              : "/fallback.jpg",
+            playerTwoImage: f2 ? `${API_URL}/assets/${f2}` : "/fallback.jpg",
           };
         });
 
-        setDesafios(prev => [...prev, ...mapped]);
+        setDesafios((prev) => [...prev, ...mapped]);
         setHasMore(mapped.length === ITEMS_PER_PAGE);
       })
       .catch(console.error);
@@ -135,7 +129,7 @@ export default function DesafiosPage() {
   const handleVoteSwitch = (desafioId: string, next: "one" | "two") => {
     const prev = userVotes[desafioId] ?? null;
     const nextVote = prev === next ? null : next;
-    const desafio = desafios.find(d => d.id === desafioId)!;
+    const desafio = desafios.find((d) => d.id === desafioId)!;
     const patch: Record<string, number> = {};
 
     if (prev === "one") patch.votos_1 = Number(desafio.votesOne) - 1;
@@ -151,29 +145,29 @@ export default function DesafiosPage() {
     axios
       .patch(`${API_URL}/items/Desafios/${desafioId}`, patch, {
         headers: {
-          'Content-Type': 'application/json'
-        }
+          "Content-Type": "application/json",
+        },
       })
       .then(() => {
-        // Atualizar estado local
-        setDesafios(prevList =>
-          prevList.map(d =>
+        setDesafios((prevList) =>
+          prevList.map((d) =>
             d.id === desafioId
               ? {
                   ...d,
-                  votesOne: patch.votos_1 !== undefined ? patch.votos_1 : d.votesOne,
-                  votesTwo: patch.votos_2 !== undefined ? patch.votos_2 : d.votesTwo,
+                  votesOne:
+                    patch.votos_1 !== undefined ? patch.votos_1 : d.votesOne,
+                  votesTwo:
+                    patch.votos_2 !== undefined ? patch.votos_2 : d.votesTwo,
                 }
               : d
           )
         );
-        
-        // Salvar o voto do usuário
-        setUserVotes(u => ({ ...u, [desafioId]: nextVote }));
+
+        setUserVotes((u) => ({ ...u, [desafioId]: nextVote }));
       })
-      .catch(error => {
-        console.error('Erro ao votar:', error);
-        alert('Erro ao registrar voto. Tente novamente.');
+      .catch((error) => {
+        console.error("Erro ao votar:", error);
+        alert("Erro ao registrar voto. Tente novamente.");
       });
   };
 
@@ -184,10 +178,10 @@ export default function DesafiosPage() {
         <FilterButtons
           options={["Próximos", "Últimos"]}
           selected={filter}
-          onSelect={v => setFilter(v as any)}
+          onSelect={(v) => setFilter(v as any)}
         />
         <div className="flex flex-col gap-5">
-          {desafios.map(d => (
+          {desafios.map((d) => (
             <Challenge
               key={d.id}
               category={d.category}
@@ -202,7 +196,7 @@ export default function DesafiosPage() {
               votesTwo={d.votesTwo}
               voted={userVotes[d.id] ?? null}
               canVote={filter === "Próximos"}
-              onVote={p => handleVoteSwitch(d.id, p)}
+              onVote={(p) => handleVoteSwitch(d.id, p)}
             />
           ))}
         </div>

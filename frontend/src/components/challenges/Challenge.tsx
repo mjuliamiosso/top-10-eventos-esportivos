@@ -1,4 +1,3 @@
-// src/components/challenges/Challenge.tsx
 "use client";
 
 import React, { FC } from "react";
@@ -36,11 +35,6 @@ const Challenge: FC<ChallengeProps> = ({
   canVote,
   onVote,
 }) => {
-  // Total e porcentagens ainda estão aqui caso queira usar futuramente
-  const total = votesOne + votesTwo;
-  const pctOne = total === 0 ? 50 : (votesOne / total) * 100;
-  const pctTwo = total === 0 ? 50 : (votesTwo / total) * 100;
-
   return (
     <div className="space-y-4">
       {/* Categoria + data */}

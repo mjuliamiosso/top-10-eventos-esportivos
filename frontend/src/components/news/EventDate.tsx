@@ -1,4 +1,3 @@
-// src/components/news/EventDate.tsx
 import React, { FC } from "react";
 
 interface EventDateProps {

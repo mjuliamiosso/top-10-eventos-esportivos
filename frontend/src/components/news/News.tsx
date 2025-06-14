@@ -1,4 +1,3 @@
-// src/components/news/News.tsx
 import React, { FC } from "react";
 import Image from "next/image";
 import Link from "next/link";

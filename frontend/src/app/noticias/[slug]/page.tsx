@@ -1,4 +1,3 @@
-// src/app/news/[slug]/page.tsx
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -30,6 +29,15 @@ type InterviewItem = {
   video: string | null;
 };
 
+function generateSlug(s: string) {
+  return s
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
+}
+
 export default function Page() {
   const { slug } = useParams();
   const [article, setArticle] = useState<NewsItem | null>(null);
@@ -38,39 +46,81 @@ export default function Page() {
   const [interviews, setInterviews] = useState<InterviewItem[]>([]);
 
   useEffect(() => {
-    axios
-      .get<{ data: NewsItem[] }>(`${API_URL}/items/Noticias`, {
-        params: {
-          fields:
-            "id,slug,tag.id,tag.nome,titulo,subtitulo,imagem,artigo,date_created",
-          filter: { slug: { _eq: slug }, status: { _eq: "published" } },
-        },
-      })
-      .then((res) => setArticle(res.data.data[0] || null));
+    const fetchArticleData = async () => {
+      try {
+        let foundArticle = null;
+
+        const newsResponse = await axios.get<{
+          data: Omit<NewsItem, "slug">[];
+        }>(`${API_URL}/items/Noticias`, {
+          params: {
+            fields:
+              "id,tag.id,tag.nome,titulo,subtitulo,imagem,artigo,date_created",
+            filter: { status: { _eq: "published" } },
+          },
+        });
+
+        const newsWithSlugs = newsResponse.data.data.map((n) => ({
+          ...n,
+          slug: generateSlug(n.titulo),
+        }));
+
+        foundArticle = newsWithSlugs.find((n) => n.slug === slug);
+
+        if (!foundArticle) {
+          const healthResponse = await axios.get<{
+            data: Omit<HealthItem, "slug">[];
+          }>(`${API_URL}/items/Saude`, {
+            params: {
+              fields:
+                "id,tag.id,tag.nome,titulo,subtitulo,imagem,artigo,date_created",
+              filter: { status: { _eq: "published" } },
+            },
+          });
+
+          const healthWithSlugs = healthResponse.data.data.map((h) => ({
+            ...h,
+            slug: generateSlug(h.titulo),
+          }));
+
+          foundArticle = healthWithSlugs.find((h) => h.slug === slug);
+        }
+
+        setArticle(foundArticle || null);
+
+        const otherNewsFiltered = newsWithSlugs
+          .filter((n) => n.slug !== slug)
+          .sort(
+            (a, b) =>
+              new Date(b.date_created).getTime() -
+              new Date(a.date_created).getTime()
+          )
+          .slice(0, 3);
+
+        setOtherNews(otherNewsFiltered);
+      } catch (error) {
+        console.error("Erro ao buscar artigo:", error);
+      }
+    };
 
     axios
-      .get<{ data: NewsItem[] }>(`${API_URL}/items/Noticias`, {
+      .get<{ data: Omit<HealthItem, "slug">[] }>(`${API_URL}/items/Saude`, {
         params: {
           fields:
-            "id,slug,tag.id,tag.nome,titulo,subtitulo,imagem,artigo,date_created",
-          filter: { slug: { _neq: slug }, status: { _eq: "published" } },
-          sort: "-date_created",
-          limit: 3,
-        },
-      })
-      .then((res) => setOtherNews(res.data.data));
-
-    axios
-      .get<{ data: HealthItem[] }>(`${API_URL}/items/Saude`, {
-        params: {
-          fields:
-            "id,slug,tag.id,tag.nome,titulo,subtitulo,imagem,artigo,date_created",
+            "id,tag.id,tag.nome,titulo,subtitulo,imagem,artigo,date_created",
           filter: { status: { _eq: "published" } },
           sort: "-date_created",
           limit: 3,
         },
       })
-      .then((res) => setHealthNews(res.data.data));
+      .then((res) => {
+        const healthWithSlugs = res.data.data.map((h) => ({
+          ...h,
+          slug: generateSlug(h.titulo),
+        }));
+        setHealthNews(healthWithSlugs);
+      })
+      .catch((error) => console.error("Erro ao buscar saúde:", error));
 
     axios
       .get<{ data: InterviewItem[] }>(`${API_URL}/items/Entrevistas`, {
@@ -81,8 +131,27 @@ export default function Page() {
           limit: 3,
         },
       })
-      .then((res) => setInterviews(res.data.data));
+      .then((res) => setInterviews(res.data.data))
+      .catch((error) => console.error("Erro ao buscar entrevistas:", error));
+
+    if (slug) {
+      fetchArticleData();
+    }
   }, [slug]);
+
+  if (!article) {
+    return (
+      <section className="bg-[var(--background-color)]">
+        <div className="container sectionSpacing">
+          <div className="flex justify-center items-center min-h-[400px]">
+            <p className="text-[var(--text-color)]">
+              {article === null ? "Carregando..." : "Artigo não encontrado"}
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="bg-[var(--background-color)]">
@@ -90,24 +159,21 @@ export default function Page() {
         <div className="grid newsGrid">
           <div className="flex flex-col gap-5 lg:gap-10">
             <h3 className="text-2xl font-bold text-[var(--text-color)]">
-              {article?.titulo}
+              {article.titulo}
             </h3>
             <div>
-              <p className="text-base">{article?.subtitulo}</p>
+              <p className="text-base">{article.subtitulo}</p>
               <p className="text-sm font-bold text-[var(--gray-color)]">
-                {new Date(article?.date_created || "").toLocaleDateString(
-                  "pt-BR",
-                  {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                  }
-                )}
+                {new Date(article.date_created).toLocaleDateString("pt-BR", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })}
               </p>
             </div>
             <div
               className="text-base text-[var(--text-color)]"
-              dangerouslySetInnerHTML={{ __html: article?.artigo || "" }}
+              dangerouslySetInnerHTML={{ __html: article.artigo || "" }}
             />
           </div>
           <div className="flex flex-col gap-5 lg:gap-10">

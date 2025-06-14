@@ -1,7 +1,5 @@
-// src/components/news/Interview.tsx
 import React, { FC, useRef } from "react";
 import { FaExpand } from "react-icons/fa";
-import clsx from "clsx";
 
 interface InterviewProps {
   titulo: string;
