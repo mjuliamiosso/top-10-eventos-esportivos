@@ -1,15 +1,14 @@
-# production
 FROM node:18-slim
 WORKDIR /app
 
-# dependencies
-COPY package*.json ./
-COPY node_modules/ ./node_modules
-
-# build
-COPY .next/ ./.next
-COPY public/ ./public
+# copy ready files
+COPY .next .next
+COPY public ./public
 COPY next.config.ts ./next.config.ts
+COPY package.json ./package.json
+
+# dependencies
+RUN npm ci --omit=dev
 
 ENV NODE_ENV=production
 EXPOSE 3000
