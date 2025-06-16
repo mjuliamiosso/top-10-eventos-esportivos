@@ -156,7 +156,7 @@ export default function Page() {
   return (
     <section className="bg-[var(--background-color)]">
       <div className="container sectionSpacing">
-        <div className="grid newsGrid">
+        <div className="grid gap-10 newsGrid">
           <div className="flex flex-col gap-5 lg:gap-10">
             <h3 className="text-2xl font-bold text-[var(--text-color)]">
               {article.titulo}
@@ -177,8 +177,8 @@ export default function Page() {
             />
           </div>
           <div className="flex flex-col gap-5 lg:gap-10">
-            <h3 className="text-2xl font-bold uppercase">Outras notícias</h3>
-            <div className="flex flex-col gap-5">
+            <h3 className="text-xl font-bold uppercase">Outras notícias</h3>
+            <div className="flex flex-col gap-5 mb-5">
               {otherNews.map((n) => (
                 <News
                   key={n.id}
@@ -193,7 +193,7 @@ export default function Page() {
                 />
               ))}
             </div>
-            <h3 className="text-2xl font-bold uppercase">Saúde e bem estar</h3>
+            <h3 className="text-xl font-bold uppercase">Saúde e bem estar</h3>
             <div className="flex flex-col gap-5">
               {healthNews.map((h) => (
                 <News
@@ -206,18 +206,6 @@ export default function Page() {
                   imagem={h.imagem}
                   date_created={h.date_created}
                   variant="horizontal"
-                />
-              ))}
-            </div>
-            <h3 className="text-2xl font-bold uppercase">Entrevistas</h3>
-            <div className="flex flex-col gap-5">
-              {interviews.map((iv) => (
-                <Interview
-                  key={iv.id}
-                  titulo={iv.titulo}
-                  endereco={iv.endereco}
-                  data={iv.data}
-                  video={iv.video}
                 />
               ))}
             </div>

@@ -3,15 +3,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
-import LightGallery from "lightgallery/react";
-import lgThumbnail from "lightgallery/plugins/thumbnail";
-import lgZoom from "lightgallery/plugins/zoom";
-import "lightgallery/css/lightgallery.css";
-import "lightgallery/css/lg-zoom.css";
-import "lightgallery/css/lg-thumbnail.css";
 import Button from "@/components/common/Button";
 import Select from "@/components/common/Select";
 import { FaPlus } from "react-icons/fa";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
 
 const API_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
 const ITEMS_PER_PAGE = 6;
@@ -28,6 +24,8 @@ export default function Page() {
   const [hasMore, setHasMore] = useState(true);
   const [years, setYears] = useState<string[]>([]);
   const [selectedYear, setSelectedYear] = useState<string>("");
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     axios
@@ -99,6 +97,12 @@ export default function Page() {
     fetchPage(next);
   };
 
+  const slides = imagens
+    .filter((item) => item.imagem)
+    .map((item) => ({
+      src: `${API_URL}/assets/${item.imagem}`,
+    }));
+
   return (
     <section className="bg-[var(--background-color)]">
       <div className="container sectionSpacing">
@@ -111,32 +115,35 @@ export default function Page() {
             onChange={(e) => setSelectedYear(e.target.value)}
           />
         </div>
-        <LightGallery
-          speed={500}
-          plugins={[lgThumbnail, lgZoom]}
-          elementClassNames="grid grid-cols-3 gap-[8px] lg:gap-5"
-        >
-          {imagens
-            .filter((item) => item.imagem)
-            .map((item, i) => {
-              const url = `${API_URL}/assets/${item.imagem}`;
-              return (
-                <a
-                  key={item.id}
-                  href={url}
-                  className="block relative overflow-hidden rounded-[6px] aspect-square"
-                >
-                  <Image
-                    src={url}
-                    alt={`Imagem ${i + 1}`}
-                    fill
-                    unoptimized
-                    className="object-cover hover:scale-105 transition-all duration-300 ease-in-out object-center"
-                  />
-                </a>
-              );
-            })}
-        </LightGallery>
+
+        <div className="grid grid-cols-3 gap-[8px] lg:gap-5">
+          {slides.map((slide, i) => (
+            <div
+              key={i}
+              className="block relative overflow-hidden rounded-[6px] aspect-square cursor-pointer"
+              onClick={() => {
+                setCurrentIndex(i);
+                setLightboxOpen(true);
+              }}
+            >
+              <Image
+                src={slide.src}
+                alt={`Imagem ${i + 1}`}
+                fill
+                unoptimized
+                className="object-cover hover:scale-105 transition-all duration-300 ease-in-out object-center"
+              />
+            </div>
+          ))}
+        </div>
+
+        <Lightbox
+          open={lightboxOpen}
+          close={() => setLightboxOpen(false)}
+          slides={slides}
+          index={currentIndex}
+        />
+
         {hasMore && (
           <div className="flex justify-center mt-4">
             <Button onClick={handleLoadMore}>

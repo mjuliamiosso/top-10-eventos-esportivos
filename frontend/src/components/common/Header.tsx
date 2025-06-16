@@ -54,22 +54,22 @@ const Header = () => {
               <Link href="/" onClick={() => setMenuOpen(false)}>
                 Início
               </Link>
-              <Link href="/challenges" onClick={() => setMenuOpen(false)}>
+              <Link href="/desafios" onClick={() => setMenuOpen(false)}>
                 Desafios
               </Link>
               <Link href="/ranking" onClick={() => setMenuOpen(false)}>
                 Ranking
               </Link>
-              <Link href="/gallery" onClick={() => setMenuOpen(false)}>
+              <Link href="/galeria" onClick={() => setMenuOpen(false)}>
                 Galeria
               </Link>
               <Link href="/tennisCenter" onClick={() => setMenuOpen(false)}>
                 Tennis Center
               </Link>
-              <Link href="/news" onClick={() => setMenuOpen(false)}>
+              <Link href="/noticias" onClick={() => setMenuOpen(false)}>
                 Notícias
               </Link>
-              <Link href="/aboutUS" onClick={() => setMenuOpen(false)}>
+              <Link href="/sobreNos" onClick={() => setMenuOpen(false)}>
                 Quem Somos
               </Link>
             </nav>
