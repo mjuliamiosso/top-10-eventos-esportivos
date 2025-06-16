@@ -98,6 +98,18 @@ services:
       EMAIL_SMTP_USER: ${EMAIL_SMTP_USER}
       EMAIL_SMTP_PASSWORD: ${EMAIL_SMTP_PASSWORD}
 
+  nextjs:
+    build:
+      context: ./frontend
+    container_name: top10-next
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=${PUBLIC_URL}/cms
+    depends_on:
+      - directus
+    restart: always
+
 volumes:
   db-data:
   cache-data:
