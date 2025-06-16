@@ -65,6 +65,8 @@ type UiDesafio = {
 
 type FaqItem = { pergunta: string; resposta: string };
 
+const categorias = ["Feminino", "Principiante", "Intermediário", "Avançado"];
+
 export default function Home() {
   const responsiveHero = {
     superLargeDesktop: { breakpoint: { max: 4000, min: 1440 }, items: 1 },
@@ -81,8 +83,6 @@ export default function Home() {
     smallTablet: { breakpoint: { max: 768, min: 640 }, items: 4 },
     mobile: { breakpoint: { max: 640, min: 0 }, items: 3 },
   };
-
-  const categorias = ["Feminino", "Principiante", "Intermediário", "Avançado"];
 
   const sponsors = [
     "/sponsors/1000-tintas.png",
@@ -207,6 +207,13 @@ export default function Home() {
 
   useEffect(() => {
     if (!latestMes) return;
+    const categorias = [
+      "Feminino",
+      "Principiante",
+      "Intermediário",
+      "Avançado",
+    ];
+
     categorias.forEach((cat) => {
       axios
         .get<{ data: RankingItem[] }>(`${API_URL}/items/Rankings`, {

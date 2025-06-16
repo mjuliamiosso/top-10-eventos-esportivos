@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
 import Button from "@/components/common/Button";
@@ -11,87 +11,71 @@ import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 
-const API_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
-const ITEMS_PER_PAGE = 6;
-
 type ImagemItem = {
   id: string;
   imagem: string | null;
   datahora: string;
 };
 
+type GalleryFilter = {
+  status: { _eq: "published" };
+  datahora?: { _between: [string, string] };
+};
+
+const API_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
+const ITEMS_PER_PAGE = 6;
+
 export default function Page() {
   const [imagens, setImagens] = useState<ImagemItem[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [years, setYears] = useState<string[]>([]);
+  const [years] = useState<string[]>([]);
   const [selectedYear, setSelectedYear] = useState<string>("");
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  useEffect(() => {
-    axios
-      .get<{ data: { datahora: string }[] }>(`${API_URL}/items/Galeria`, {
-        params: {
-          fields: ["datahora"],
-          filter: { status: { _eq: "published" } },
-          limit: -1,
-        },
-      })
-      .then((res) => {
-        const raw = res.data.data.map((i) =>
-          new Date(i.datahora).getFullYear().toString()
-        );
-        const unique = Array.from(new Set(raw)).sort((a, b) =>
-          b.localeCompare(a)
-        );
-        if (unique.length) {
-          setYears(unique);
-          setSelectedYear(unique[0]);
-        }
-      })
-      .catch(console.error);
-  }, []);
-
-  const fetchPage = (pageNum: number) => {
-    const filter: any = { status: { _eq: "published" } };
-    if (selectedYear) {
-      filter.datahora = {
-        _between: [`${selectedYear}-01-01`, `${selectedYear}-12-31`],
-      };
-    }
-    axios
-      .get<{ data: ImagemItem[] }>(`${API_URL}/items/Galeria`, {
-        params: {
-          filter,
-          fields: ["id", "imagem", "datahora"],
-          sort: ["-datahora"],
-          limit: ITEMS_PER_PAGE + 1,
-          offset: (pageNum - 1) * ITEMS_PER_PAGE,
-        },
-      })
-      .then((res) => {
-        const fetched = res.data.data;
-        if (fetched.length > ITEMS_PER_PAGE) {
-          const itemsToShow = fetched.slice(0, ITEMS_PER_PAGE);
-          setImagens((prev) =>
-            pageNum === 1 ? itemsToShow : [...prev, ...itemsToShow]
-          );
-          setHasMore(true);
-        } else {
-          setImagens((prev) =>
-            pageNum === 1 ? fetched : [...prev, ...fetched]
-          );
-          setHasMore(false);
-        }
-      })
-      .catch(console.error);
-  };
+  const fetchPage = useCallback(
+    (pageNum: number) => {
+      const filter: GalleryFilter = { status: { _eq: "published" } };
+      if (selectedYear) {
+        filter.datahora = {
+          _between: [`${selectedYear}-01-01`, `${selectedYear}-12-31`],
+        };
+      }
+      axios
+        .get<{ data: ImagemItem[] }>(`${API_URL}/items/Galeria`, {
+          params: {
+            filter,
+            fields: ["id", "imagem", "datahora"],
+            sort: ["-datahora"],
+            limit: ITEMS_PER_PAGE + 1,
+            offset: (pageNum - 1) * ITEMS_PER_PAGE,
+          },
+        })
+        .then((res) => {
+          const fetched = res.data.data;
+          if (fetched.length > ITEMS_PER_PAGE) {
+            const itemsToShow = fetched.slice(0, ITEMS_PER_PAGE);
+            setImagens((prev) =>
+              pageNum === 1 ? itemsToShow : [...prev, ...itemsToShow]
+            );
+            setHasMore(true);
+          } else {
+            setImagens((prev) =>
+              pageNum === 1 ? fetched : [...prev, ...fetched]
+            );
+            setHasMore(false);
+          }
+        })
+        .catch(console.error);
+    },
+    [selectedYear]
+  );
 
   useEffect(() => {
     setPage(1);
     fetchPage(1);
-  }, [selectedYear]);
+  }, [selectedYear, fetchPage]);
 
   const handleLoadMore = () => {
     const next = page + 1;

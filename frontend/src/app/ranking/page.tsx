@@ -16,6 +16,12 @@ type RankingItem = {
   jogador: { nome: string };
 };
 
+type RankingFilter = {
+  status: { _eq: "published" };
+  mes: { _eq: string };
+  categoria?: { nome: { _eq: string } };
+};
+
 type Categoria = {
   id: string;
   nome: string;
@@ -79,7 +85,7 @@ const Page: React.FC = () => {
   useEffect(() => {
     if (!selectedMes) return;
 
-    const filter: any = {
+    const filter: RankingFilter = {
       status: { _eq: "published" },
       mes: { _eq: selectedMes },
     };

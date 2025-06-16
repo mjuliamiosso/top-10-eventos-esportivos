@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import News from "@/components/news/News";
-import Interview from "@/components/news/Interview";
 import { useParams } from "next/navigation";
 
 const API_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
@@ -21,14 +20,6 @@ type NewsItem = {
 
 type HealthItem = NewsItem;
 
-type InterviewItem = {
-  id: string;
-  titulo: string;
-  endereco: string;
-  data: string;
-  video: string | null;
-};
-
 function generateSlug(s: string) {
   return s
     .normalize("NFD")
@@ -43,7 +34,6 @@ export default function Page() {
   const [article, setArticle] = useState<NewsItem | null>(null);
   const [otherNews, setOtherNews] = useState<NewsItem[]>([]);
   const [healthNews, setHealthNews] = useState<HealthItem[]>([]);
-  const [interviews, setInterviews] = useState<InterviewItem[]>([]);
 
   useEffect(() => {
     const fetchArticleData = async () => {
@@ -121,18 +111,6 @@ export default function Page() {
         setHealthNews(healthWithSlugs);
       })
       .catch((error) => console.error("Erro ao buscar saúde:", error));
-
-    axios
-      .get<{ data: InterviewItem[] }>(`${API_URL}/items/Entrevistas`, {
-        params: {
-          fields: "id,titulo,endereco,data,video",
-          filter: { status: { _eq: "published" } },
-          sort: "-data",
-          limit: 3,
-        },
-      })
-      .then((res) => setInterviews(res.data.data))
-      .catch((error) => console.error("Erro ao buscar entrevistas:", error));
 
     if (slug) {
       fetchArticleData();
