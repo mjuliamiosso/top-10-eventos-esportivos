@@ -12,12 +12,12 @@
     "@directus/sdk": "^18.0.3",
     "axios": "^1.9.0",
     "clsx": "^2.1.1",
-    "lightgallery": "^2.8.3",
     "next": "15.3.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
-    "react-multi-carousel": "^2.8.6"
+    "react-multi-carousel": "^2.8.6",
+    "yet-another-react-lightbox": "^3.23.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

@@ -73,8 +73,10 @@ export default function Page() {
   const [healthLimit, setHealthLimit] = useState(3);
   const [events, setEvents] = useState<EventItem[]>([]);
   const [interviews, setInterviews] = useState<InterviewItem[]>([]);
-  const carouselRefEvent = useRef<any>(null);
-  const carouselRefInterview = useRef<any>(null);
+  const carouselRefEvent = useRef<InstanceType<typeof Carousel> | null>(null);
+  const carouselRefInterview = useRef<InstanceType<typeof Carousel> | null>(
+    null
+  );
 
   useEffect(() => {
     axios
@@ -171,13 +173,13 @@ export default function Page() {
             <h2 className="sectionHeading">O que tá rolando por aqui?</h2>
             <div className="lg:flex gap-5 hidden">
               <button
-                onClick={() => carouselRefEvent.current?.previous()}
+                onClick={() => carouselRefEvent.current?.previous(1)}
                 className="cursor-pointer bg-white text-black rounded-full p-2 hover:text-[var(--secondary-color)] transition-all duration-300 ease-in-out"
               >
                 <IoIosArrowBack />
               </button>
               <button
-                onClick={() => carouselRefEvent.current?.next()}
+                onClick={() => carouselRefEvent.current?.next(1)}
                 className="cursor-pointer bg-white text-black rounded-full p-2 hover:text-[var(--secondary-color)] transition-all duration-300 ease-in-out"
               >
                 <IoIosArrowForward />
@@ -218,13 +220,13 @@ export default function Page() {
             <h2 className="sectionHeading">Entrevistas</h2>
             <div className="lg:flex gap-5 hidden">
               <button
-                onClick={() => carouselRefInterview.current?.previous()}
+                onClick={() => carouselRefInterview.current?.previous(1)}
                 className="cursor-pointer bg-white text-black rounded-full p-2 hover:text-[var(--secondary-color)] transition-all duration-300 ease-in-out"
               >
                 <IoIosArrowBack />
               </button>
               <button
-                onClick={() => carouselRefInterview.current?.next()}
+                onClick={() => carouselRefInterview.current?.next(1)}
                 className="cursor-pointer bg-white text-black rounded-full p-2  hover:text-[var(--secondary-color)] transition-all duration-300 ease-in-out"
               >
                 <IoIosArrowForward />

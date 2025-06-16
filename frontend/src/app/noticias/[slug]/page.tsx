@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import News from "@/components/news/News";
-import Interview from "@/components/news/Interview";
 import { useParams } from "next/navigation";
 
 const API_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
@@ -21,14 +20,6 @@ type NewsItem = {
 
 type HealthItem = NewsItem;
 
-type InterviewItem = {
-  id: string;
-  titulo: string;
-  endereco: string;
-  data: string;
-  video: string | null;
-};
-
 function generateSlug(s: string) {
   return s
     .normalize("NFD")
@@ -43,7 +34,6 @@ export default function Page() {
   const [article, setArticle] = useState<NewsItem | null>(null);
   const [otherNews, setOtherNews] = useState<NewsItem[]>([]);
   const [healthNews, setHealthNews] = useState<HealthItem[]>([]);
-  const [interviews, setInterviews] = useState<InterviewItem[]>([]);
 
   useEffect(() => {
     const fetchArticleData = async () => {
@@ -122,18 +112,6 @@ export default function Page() {
       })
       .catch((error) => console.error("Erro ao buscar saúde:", error));
 
-    axios
-      .get<{ data: InterviewItem[] }>(`${API_URL}/items/Entrevistas`, {
-        params: {
-          fields: "id,titulo,endereco,data,video",
-          filter: { status: { _eq: "published" } },
-          sort: "-data",
-          limit: 3,
-        },
-      })
-      .then((res) => setInterviews(res.data.data))
-      .catch((error) => console.error("Erro ao buscar entrevistas:", error));
-
     if (slug) {
       fetchArticleData();
     }
@@ -156,7 +134,7 @@ export default function Page() {
   return (
     <section className="bg-[var(--background-color)]">
       <div className="container sectionSpacing">
-        <div className="grid newsGrid">
+        <div className="grid gap-10 newsGrid">
           <div className="flex flex-col gap-5 lg:gap-10">
             <h3 className="text-2xl font-bold text-[var(--text-color)]">
               {article.titulo}
@@ -177,8 +155,8 @@ export default function Page() {
             />
           </div>
           <div className="flex flex-col gap-5 lg:gap-10">
-            <h3 className="text-2xl font-bold uppercase">Outras notícias</h3>
-            <div className="flex flex-col gap-5">
+            <h3 className="text-xl font-bold uppercase">Outras notícias</h3>
+            <div className="flex flex-col gap-5 mb-5">
               {otherNews.map((n) => (
                 <News
                   key={n.id}
@@ -193,7 +171,7 @@ export default function Page() {
                 />
               ))}
             </div>
-            <h3 className="text-2xl font-bold uppercase">Saúde e bem estar</h3>
+            <h3 className="text-xl font-bold uppercase">Saúde e bem estar</h3>
             <div className="flex flex-col gap-5">
               {healthNews.map((h) => (
                 <News
@@ -206,18 +184,6 @@ export default function Page() {
                   imagem={h.imagem}
                   date_created={h.date_created}
                   variant="horizontal"
-                />
-              ))}
-            </div>
-            <h3 className="text-2xl font-bold uppercase">Entrevistas</h3>
-            <div className="flex flex-col gap-5">
-              {interviews.map((iv) => (
-                <Interview
-                  key={iv.id}
-                  titulo={iv.titulo}
-                  endereco={iv.endereco}
-                  data={iv.data}
-                  video={iv.video}
                 />
               ))}
             </div>
