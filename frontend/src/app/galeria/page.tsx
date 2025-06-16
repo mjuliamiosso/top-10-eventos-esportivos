@@ -7,7 +7,9 @@ import Button from "@/components/common/Button";
 import Select from "@/components/common/Select";
 import { FaPlus } from "react-icons/fa";
 import Lightbox from "yet-another-react-lightbox";
+import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 import "yet-another-react-lightbox/styles.css";
+import "yet-another-react-lightbox/plugins/thumbnails.css";
 
 const API_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
 const ITEMS_PER_PAGE = 6;
@@ -107,42 +109,50 @@ export default function Page() {
     <section className="bg-[var(--background-color)]">
       <div className="container sectionSpacing">
         <h2 className="sectionHeading">Galeria</h2>
-        <div className="my-4 w-40">
-          <Select
-            name="year"
-            options={years.map((y) => ({ value: y, label: y }))}
-            value={selectedYear}
-            onChange={(e) => setSelectedYear(e.target.value)}
+
+        <div>
+          <div className="my-4 w-40">
+            <Select
+              name="year"
+              options={years.map((y) => ({ value: y, label: y }))}
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(e.target.value)}
+            />
+          </div>
+          <div className="grid grid-cols-3 gap-[8px] lg:gap-5">
+            {slides.map((slide, i) => (
+              <div
+                key={i}
+                className="block relative overflow-hidden rounded-[6px] aspect-square cursor-pointer"
+                onClick={() => {
+                  setCurrentIndex(i);
+                  setLightboxOpen(true);
+                }}
+              >
+                <Image
+                  src={slide.src}
+                  alt={`Imagem ${i + 1}`}
+                  fill
+                  unoptimized
+                  className="object-cover hover:scale-105 transition-all duration-300 ease-in-out object-center"
+                />
+              </div>
+            ))}
+          </div>
+
+          <Lightbox
+            open={lightboxOpen}
+            close={() => setLightboxOpen(false)}
+            slides={slides}
+            index={currentIndex}
+            plugins={[Thumbnails]}
+            thumbnails={{
+              position: "bottom",
+              border: 2,
+              borderColor: "#61646b",
+            }}
           />
         </div>
-
-        <div className="grid grid-cols-3 gap-[8px] lg:gap-5">
-          {slides.map((slide, i) => (
-            <div
-              key={i}
-              className="block relative overflow-hidden rounded-[6px] aspect-square cursor-pointer"
-              onClick={() => {
-                setCurrentIndex(i);
-                setLightboxOpen(true);
-              }}
-            >
-              <Image
-                src={slide.src}
-                alt={`Imagem ${i + 1}`}
-                fill
-                unoptimized
-                className="object-cover hover:scale-105 transition-all duration-300 ease-in-out object-center"
-              />
-            </div>
-          ))}
-        </div>
-
-        <Lightbox
-          open={lightboxOpen}
-          close={() => setLightboxOpen(false)}
-          slides={slides}
-          index={currentIndex}
-        />
 
         {hasMore && (
           <div className="flex justify-center mt-4">
