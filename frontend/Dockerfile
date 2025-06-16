@@ -1,22 +1,22 @@
 # build
-FROM node:18-alpine AS builder
+FROM node:18-slim AS builder
 WORKDIR /app
 
 # dependencies
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
 # build
 COPY . .
 RUN npm run build
 
 # prod
-FROM node:18-alpine
+FROM node:18-slim
 WORKDIR /app
 
 # prod dependencies
 COPY package*.json ./
-RUN npm install --production
+RUN npm ci --production
 
 # build artifacts
 COPY --from=builder /app/.next .next
