@@ -109,7 +109,23 @@ services:
       - directus
     restart: always
 
+  caddy:
+    image: caddy:2
+    container_name: top10-caddy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - nextjs
+      - directus
+
 volumes:
   db-data:
   cache-data:
   uploads:
+  caddy_data:
+  caddy_config:
