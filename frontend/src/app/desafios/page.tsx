@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Desafios from "./Desafios";
+import DesafiosPage from "./DesafiosPage";
 
 export const metadata: Metadata = {
   title: "Desafios – Top 10 Eventos Esportivos",
@@ -23,5 +23,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <Desafios />;
+  return <DesafiosPage />;
 }

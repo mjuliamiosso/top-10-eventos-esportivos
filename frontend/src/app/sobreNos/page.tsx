@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import SobreNos from "./SobreNos";
+import SobreNosPage from "./SobreNosPage";
 
 export const metadata: Metadata = {
   title: "Quem Somos – Top 10 Eventos Esportivos",
@@ -23,5 +23,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <SobreNos />;
+  return <SobreNosPage />;
 }

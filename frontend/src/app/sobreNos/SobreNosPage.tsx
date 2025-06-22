@@ -16,7 +16,7 @@ type Projeto = {
   imagem: string | null;
 };
 
-export default function SobreNos() {
+export default function SobreNosPage() {
   const [sobre, setSobre] = useState<string>("");
   const [projetos, setProjetos] = useState<Projeto[]>([]);
 

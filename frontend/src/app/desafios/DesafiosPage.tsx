@@ -41,7 +41,7 @@ type UIChallenge = {
   playerTwoImage: string;
 };
 
-export default function Desafios() {
+export default function DesafiosPage() {
   const [desafios, setDesafios] = useState<UIChallenge[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);

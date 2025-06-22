@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Noticias from "./Noticias";
+import NoticiasPage from "./NoticiasPage";
 
 export const metadata: Metadata = {
   title: "Notícias – Top 10 Eventos Esportivos",
@@ -23,5 +23,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <Noticias />;
+  return <NoticiasPage />;
 }

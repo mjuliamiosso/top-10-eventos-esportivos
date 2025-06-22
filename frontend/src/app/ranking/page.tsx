@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import RankingClient from "./RankingClient";
+import RankingPage from "./RankingPage";
 
 export const metadata: Metadata = {
   title: "Ranking – Top 10 Eventos Esportivos",
@@ -23,5 +23,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <RankingClient />;
+  return <RankingPage />;
 }

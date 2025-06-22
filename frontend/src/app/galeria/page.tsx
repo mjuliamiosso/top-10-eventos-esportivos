@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Galeria from "./Galeria";
+import Galeria from "./GaleriaPage";
 
 export const metadata: Metadata = {
   title: "Galeria – Top 10 Eventos Esportivos",

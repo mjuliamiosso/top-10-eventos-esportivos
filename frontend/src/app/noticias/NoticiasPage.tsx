@@ -64,7 +64,7 @@ function generateSlug(s: string) {
     .replace(/(^-|-$)+/g, "");
 }
 
-export default function Noticias() {
+export default function NoticiasPage() {
   const [featured, setFeatured] = useState<NewsItem[]>([]);
   const [lateral, setLateral] = useState<NewsItem[]>([]);
   const [otherAll, setOtherAll] = useState<NewsItem[]>([]);

@@ -32,7 +32,7 @@ type MesOption = {
   label: string; // jun 25
 };
 
-export default function RankingClient() {
+export default function RankingPage() {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [meses, setMeses] = useState<MesOption[]>([]);
   const [selectedFilter, setSelectedFilter] = useState("Geral");

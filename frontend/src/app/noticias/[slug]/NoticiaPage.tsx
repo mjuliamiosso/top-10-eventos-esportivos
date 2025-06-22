@@ -17,7 +17,7 @@ type NewsItem = {
   date_created: string;
 };
 
-export default function NewsPageClient({ slug }: { slug: string }) {
+export default function NoticiaPage({ slug }: { slug: string }) {
   const [article, setArticle] = useState<NewsItem | null>(null);
   const [otherNews, setOtherNews] = useState<NewsItem[]>([]);
   const [healthNews, setHealthNews] = useState<NewsItem[]>([]);

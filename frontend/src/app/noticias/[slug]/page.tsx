@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import NewsPageClient from "./NewsPageClient";
+import NoticiaPage from "./NoticiaPage";
 
 const API_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
 
@@ -63,5 +63,5 @@ export default async function Page({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  return <NewsPageClient slug={slug} />;
+  return <NoticiaPage slug={slug} />;
 }
