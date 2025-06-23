@@ -1,0 +1,7 @@
+top10rgta.com.br {
+  reverse_proxy nextjs:3000
+}
+
+cms.top10rgta.com.br {
+  reverse_proxy directus:8055
+}

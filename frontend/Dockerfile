@@ -1,32 +1,38 @@
-# build
-FROM node:18-alpine AS builder
+# install and builder
+FROM node:18-slim AS builder
 WORKDIR /app
 
-# dependencies
-COPY package*.json ./
-RUN npm install
+# copy package manifests
+COPY package.json package-lock.json ./
 
-# build
+# install deps
+RUN npm ci
+
+# copy source
 COPY . .
+
+# inject directus url at build time
+ARG NEXT_PUBLIC_DIRECTUS_URL
+ENV NEXT_PUBLIC_DIRECTUS_URL=${NEXT_PUBLIC_DIRECTUS_URL}
+
+# build the Next.js app
 RUN npm run build
 
-# prod
-FROM node:18-alpine
+# prod image
+FROM node:18-slim AS runner
 WORKDIR /app
 
-# prod dependencies
-COPY package*.json ./
-RUN npm install --production
+# copy prod deps
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
 
-# build artifacts
-COPY --from=builder /app/.next .next
+# copy build output and public assets
+COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/next.config.ts ./next.config.ts
+COPY --from=builder /app/next.config.js ./next.config.js
 
-# app
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-
+# runtime environment
 ENV NODE_ENV=production
 EXPOSE 3000
+
 CMD ["npm", "start"]
