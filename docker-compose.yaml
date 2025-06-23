@@ -14,16 +14,14 @@ services:
       POSTGRES_DB: ${DB_DATABASE}
     healthcheck:
       test:
-        [
-          "CMD",
-          "pg_isready",
-          "-U",
-          "${DB_USER}",
-          "-d",
-          "${DB_DATABASE}",
-          "-h",
-          "localhost",
-        ]
+        - "CMD"
+        - "pg_isready"
+        - "-U"
+        - "${DB_USER}"
+        - "-d"
+        - "${DB_DATABASE}"
+        - "-h"
+        - "localhost"
       interval: 10s
       timeout: 5s
       retries: 5
@@ -47,7 +45,7 @@ services:
     image: directus/directus:11.7.2
     restart: always
     ports:
-      - ${DIRECTUS_PORT}:8055
+      - "${DIRECTUS_PORT}:8055"
     volumes:
       - uploads:/directus/uploads
     depends_on:
@@ -92,12 +90,14 @@ services:
   nextjs:
     build:
       context: ./frontend
+      args:
+        NEXT_PUBLIC_DIRECTUS_URL: ${NEXT_PUBLIC_DIRECTUS_URL}
     container_name: top10-next
     restart: always
     ports:
       - "3000:3000"
     environment:
-      - NEXT_PUBLIC_DIRECTUS_URL=${PUBLIC_URL}/cms
+      NEXT_PUBLIC_DIRECTUS_URL: ${NEXT_PUBLIC_DIRECTUS_URL}
     depends_on:
       - directus
 
