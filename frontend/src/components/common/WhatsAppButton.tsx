@@ -2,7 +2,7 @@ import React from "react";
 import { BsWhatsapp } from "react-icons/bs";
 import Link from "next/link";
 
-const WHATSAPP_NUMBER = "";
+const WHATSAPP_NUMBER = "5512982983083";
 const WHATSAPP_MESSAGE = "Olá, estou interessado nos seus serviços!";
 const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
   WHATSAPP_MESSAGE
