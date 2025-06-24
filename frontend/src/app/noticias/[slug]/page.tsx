@@ -3,12 +3,13 @@ import NoticiaPage from "./NoticiaPage";
 
 const API_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string };
-}): Promise<Metadata> {
-  const { slug } = params;
+type Props = {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
 
   const res = await fetch(
     `${API_URL}/items/Noticias?fields=titulo,subtitulo,imagem`,
@@ -27,7 +28,6 @@ export async function generateMetadata({
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)+/g, "");
-
     return { ...n, slug: computedSlug };
   });
 
@@ -63,6 +63,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function Page({ params }: { params: { slug: string } }) {
-  return <NoticiaPage slug={params.slug} />;
+export default async function Page({ params }: Props) {
+  const { slug } = await params;
+  return <NoticiaPage slug={slug} />;
 }

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Home from "./Home";
+import HomePage from "./HomePage";
 
 export const metadata: Metadata = {
   title: "Top 10 Eventos Esportivos",
@@ -25,5 +25,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <Home />;
+  return <HomePage />;
 }
