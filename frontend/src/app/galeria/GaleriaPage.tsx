@@ -25,23 +25,64 @@ type GalleryFilter = {
 const API_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
 const ITEMS_PER_PAGE = 6;
 
+type MesOption = {
+  value: string; // e.g. "2025-07"
+  label: string; // e.g. "jul 25"
+};
+
 export default function Galeria() {
   const [imagens, setImagens] = useState<ImagemItem[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [years] = useState<string[]>([]);
-  const [selectedYear, setSelectedYear] = useState<string>("");
+
+  // month–year picker state
+  const [meses, setMeses] = useState<MesOption[]>([]);
+  const [selectedMes, setSelectedMes] = useState<string>("");
+
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  // build the month/year options from all datahora values
+  useEffect(() => {
+    axios
+      .get<{ data: { datahora: string }[] }>(`${API_URL}/items/Galeria`, {
+        params: {
+          fields: ["datahora"],
+          filter: { status: { _eq: "published" } },
+          limit: -1,
+        },
+      })
+      .then((res) => {
+        const raw = Array.from(
+          new Set(res.data.data.map((i) => i.datahora.slice(0, 7)))
+        ).sort((a, b) => b.localeCompare(a));
+        const opts: MesOption[] = raw.map((ym) => {
+          const d = new Date(ym + "-01");
+          const month = d
+            .toLocaleString("pt-BR", { month: "short" })
+            .toLowerCase()
+            .replace(/\.$/, "");
+          const year = d.getFullYear().toString().slice(-2);
+          return { value: ym, label: `${month} ${year}` };
+        });
+        setMeses(opts);
+        if (opts.length) setSelectedMes(opts[0].value);
+      })
+      .catch(console.error);
+  }, []);
+
+  // fetch a page, filtered by selectedMes
   const fetchPage = useCallback(
     (pageNum: number) => {
       const filter: GalleryFilter = { status: { _eq: "published" } };
-      if (selectedYear) {
-        filter.datahora = {
-          _between: [`${selectedYear}-01-01`, `${selectedYear}-12-31`],
-        };
+      if (selectedMes) {
+        const [y, m] = selectedMes.split("-");
+        const start = `${y}-${m}-01`;
+        const lastDay = new Date(Number(y), Number(m), 0).getDate();
+        const end = `${y}-${m}-${String(lastDay).padStart(2, "0")}`;
+        filter.datahora = { _between: [start, end] };
       }
+
       axios
         .get<{ data: ImagemItem[] }>(`${API_URL}/items/Galeria`, {
           params: {
@@ -69,13 +110,13 @@ export default function Galeria() {
         })
         .catch(console.error);
     },
-    [selectedYear]
+    [selectedMes]
   );
 
   useEffect(() => {
     setPage(1);
     fetchPage(1);
-  }, [selectedYear, fetchPage]);
+  }, [selectedMes, fetchPage]);
 
   const handleLoadMore = () => {
     const next = page + 1;
@@ -85,9 +126,7 @@ export default function Galeria() {
 
   const slides = imagens
     .filter((item) => item.imagem)
-    .map((item) => ({
-      src: `${API_URL}/assets/${item.imagem}`,
-    }));
+    .map((item) => ({ src: `${API_URL}/assets/${item.imagem}` }));
 
   return (
     <section className="bg-[var(--background-color)]">
@@ -97,10 +136,13 @@ export default function Galeria() {
         <div>
           <div className="my-4 w-40">
             <Select
-              name="year"
-              options={years.map((y) => ({ value: y, label: y }))}
-              value={selectedYear}
-              onChange={(e) => setSelectedYear(e.target.value)}
+              name="mes"
+              options={meses.map((m) => ({
+                value: m.value,
+                label: m.label,
+              }))}
+              value={selectedMes}
+              onChange={(e) => setSelectedMes(e.target.value)}
             />
           </div>
           <div className="grid grid-cols-3 gap-[8px] lg:gap-5">
