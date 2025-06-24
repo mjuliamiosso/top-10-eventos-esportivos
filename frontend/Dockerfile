@@ -29,7 +29,7 @@ RUN npm ci --omit=dev
 # copy build output and public assets
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/next.config.js ./next.config.js
+COPY --from=builder /app/next.config.ts ./next.config.ts
 
 # runtime environment
 ENV NODE_ENV=production

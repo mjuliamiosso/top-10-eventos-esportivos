@@ -14,6 +14,8 @@ import "react-multi-carousel/lib/styles.css";
 
 const API_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
 
+type SponsorItem = { imagem: { id: string } };
+
 type NewsItem = {
   id: string;
   slug: string;
@@ -67,7 +69,7 @@ type FaqItem = { pergunta: string; resposta: string };
 
 const categorias = ["Feminino", "Principiante", "Intermediário", "Avançado"];
 
-export default function Home() {
+export default function HomePage() {
   const responsiveHero = {
     superLargeDesktop: { breakpoint: { max: 4000, min: 1440 }, items: 1 },
     desktop: { breakpoint: { max: 1440, min: 1024 }, items: 1 },
@@ -84,22 +86,6 @@ export default function Home() {
     mobile: { breakpoint: { max: 640, min: 0 }, items: 3 },
   };
 
-  const sponsors = [
-    "/sponsors/1000-tintas.png",
-    "/sponsors/canto-bravo.png",
-    "/sponsors/digo-tenis.png",
-    "/sponsors/j-bike.png",
-    "/sponsors/joti.png",
-    "/sponsors/leomar.png",
-    "/sponsors/lig-chopp.png",
-    "/sponsors/mega.png",
-    "/sponsors/mobicell.png",
-    "/sponsors/mrd-projetos-construcoes.png",
-    "/sponsors/tata-climatizacao.png",
-    "/sponsors/universo-motos.png",
-    "/sponsors/uroproct.webp",
-  ];
-
   const [newsList, setNewsList] = useState<NewsItem[]>([]);
   const [latestMes, setLatestMes] = useState<string>("");
   const [rankingData, setRankingData] = useState<Record<string, RankingItem[]>>(
@@ -108,8 +94,27 @@ export default function Home() {
   const [desafios, setDesafios] = useState<UiDesafio[]>([]);
   const [faqs, setFaqs] = useState<FaqItem[]>([]);
   const [banners, setBanners] = useState<string[]>([]);
+  const [sponsors, setSponsors] = useState<string[]>([]);
 
   useEffect(() => {
+    axios
+      .get<{ data: SponsorItem[] }>(`${API_URL}/items/Patrocinadores`, {
+        params: {
+          fields: "imagem.id",
+          filter: { status: { _eq: "published" } },
+          sort: "-date_created",
+        },
+      })
+      .then((res) =>
+        setSponsors(
+          res.data.data
+            .map((item) => item.imagem?.id)
+            .filter((id): id is string => Boolean(id))
+            .map((id) => `${API_URL}/assets/${id}`)
+        )
+      )
+      .catch(console.error);
+
     axios
       .get<{ data: NewsItem[] }>(`${API_URL}/items/Noticias`, {
         params: {
@@ -207,13 +212,6 @@ export default function Home() {
 
   useEffect(() => {
     if (!latestMes) return;
-    const categorias = [
-      "Feminino",
-      "Principiante",
-      "Intermediário",
-      "Avançado",
-    ];
-
     categorias.forEach((cat) => {
       axios
         .get<{ data: RankingItem[] }>(`${API_URL}/items/Rankings`, {
@@ -274,7 +272,7 @@ export default function Home() {
             <div key={i} className="w-[130px] h-[60px] aspect-[1/1] relative">
               <Image
                 src={src}
-                alt="sponsor"
+                alt="patrocinador"
                 fill
                 className="object-cover object-center rounded-[6px]"
               />
