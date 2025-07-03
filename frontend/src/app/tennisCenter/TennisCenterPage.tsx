@@ -104,7 +104,7 @@ export default function TennisCenterPage() {
         <div className="grid grid-cols-3 gap-[8px] lg:gap-5">
           {slides.map((slide, i) => {
             const isVideo = slide.type === "video";
-            const url = isVideo ? slide.sources![0].src : (slide as any).src;
+            const url = isVideo ? slide.sources[0].src : slide.src!;
             return (
               <div
                 key={i}
