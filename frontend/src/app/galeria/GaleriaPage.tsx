@@ -13,8 +13,11 @@ import "yet-another-react-lightbox/plugins/thumbnails.css";
 
 type ImagemItem = {
   id: string;
-  imagem: string | null;
   datahora: string;
+  imagem: {
+    id: string;
+    filename_download: string;
+  } | null;
 };
 
 type GalleryFilter = {
@@ -81,6 +84,7 @@ export default function Galeria() {
   // load first page when month changes
   useEffect(() => {
     setShowAll(false);
+
     const filter: GalleryFilter = { status: { _eq: "published" } };
     if (selectedMes) {
       const [y, m] = selectedMes.split("-");
@@ -94,7 +98,7 @@ export default function Galeria() {
       .get<{ data: ImagemItem[] }>(`${API_URL}/items/Galeria`, {
         params: {
           filter,
-          fields: ["id", "imagem", "datahora"],
+          fields: ["id", "datahora", "imagem.id", "imagem.filename_download"],
           sort: ["-datahora"],
           limit: ITEMS_PER_PAGE + 1,
           offset: 0,
@@ -127,7 +131,7 @@ export default function Galeria() {
       .get<{ data: ImagemItem[] }>(`${API_URL}/items/Galeria`, {
         params: {
           filter,
-          fields: ["id", "imagem", "datahora"],
+          fields: ["id", "datahora", "imagem.id", "imagem.filename_download"],
           sort: ["-datahora"],
           limit: -1,
           offset: imagens.length,
@@ -145,14 +149,18 @@ export default function Galeria() {
   const slides: Slide[] = imagens
     .filter((item) => item.imagem)
     .map((item) => {
-      const url = `${API_URL}/assets/${item.imagem}`;
-      if (/\.(mp4|webm|ogg)$/i.test(url)) {
+      const file = item.imagem!;
+      const filename = file.filename_download;
+      const src = `${API_URL}/assets/${file.id}/${encodeURIComponent(
+        filename
+      )}`;
+      if (/\.(mp4|webm|ogg)$/i.test(filename)) {
         return {
           type: "video",
-          sources: [{ src: url, type: "video/mp4" }],
-        };
+          sources: [{ src, type: "video/mp4" }],
+        } as Slide;
       }
-      return { src: url };
+      return { src } as Slide;
     });
 
   return (
@@ -171,7 +179,8 @@ export default function Galeria() {
 
         <div className="grid grid-cols-3 gap-[8px] lg:gap-5">
           {slides.map((slide, i) => {
-            const thumbUrl = "src" in slide ? slide.src : slide.sources![0].src;
+            const url = "src" in slide ? slide.src : slide.sources![0].src;
+            const isVideo = slide.type === "video";
             return (
               <div
                 key={i}
@@ -181,13 +190,23 @@ export default function Galeria() {
                   setLightboxOpen(true);
                 }}
               >
-                <Image
-                  src={thumbUrl}
-                  alt={`Item ${i + 1}`}
-                  fill
-                  unoptimized
-                  className="object-cover hover:scale-105 transition-all duration-300 ease-in-out object-center"
-                />
+                {isVideo ? (
+                  <video
+                    src={url}
+                    muted
+                    playsInline
+                    preload="metadata"
+                    className="object-cover hover:scale-105 transition-all duration-300 ease-in-out object-center"
+                  />
+                ) : (
+                  <Image
+                    src={url}
+                    alt={`Item ${i + 1}`}
+                    fill
+                    unoptimized
+                    className="object-cover hover:scale-105 transition-all duration-300 ease-in-out object-center"
+                  />
+                )}
               </div>
             );
           })}

@@ -15,7 +15,10 @@ const ITEMS_PER_PAGE = 6;
 
 type ImagemItem = {
   id: string;
-  imagem: string | null;
+  imagem: {
+    id: string;
+    filename_download: string;
+  } | null;
 };
 
 export default function TennisCenterPage() {
@@ -31,7 +34,7 @@ export default function TennisCenterPage() {
       .get<{ data: ImagemItem[] }>(`${API_URL}/items/Tennis_Center`, {
         params: {
           filter: { status: { _eq: "published" } },
-          fields: ["id", "imagem"],
+          fields: ["id", "imagem.id", "imagem.filename_download"],
           sort: ["-date_created"],
           limit: ITEMS_PER_PAGE + 1,
           offset: 0,
@@ -50,13 +53,13 @@ export default function TennisCenterPage() {
       .catch(console.error);
   }, []);
 
-  // 2️⃣ Handle "Mostrar Tudo" — fetch remaining and append without duplicates
+  // 2️⃣ Handle "Mostrar Tudo"
   const handleShowAll = useCallback(() => {
     axios
       .get<{ data: ImagemItem[] }>(`${API_URL}/items/Tennis_Center`, {
         params: {
           filter: { status: { _eq: "published" } },
-          fields: ["id", "imagem"],
+          fields: ["id", "imagem.id", "imagem.filename_download"],
           sort: ["-date_created"],
           limit: -1,
           offset: imagens.length,
@@ -74,18 +77,22 @@ export default function TennisCenterPage() {
       .catch(console.error);
   }, [imagens.length]);
 
-  // 3️⃣ Prepare slides (images + videos)
+  // 3️⃣ Prepare slides
   const slides: Slide[] = imagens
     .filter((item) => item.imagem)
-    .map<Slide>((item) => {
-      const url = `${API_URL}/assets/${item.imagem}`;
-      if (/\.(mp4|webm|ogg)$/i.test(url)) {
+    .map((item) => {
+      const file = item.imagem!;
+      const filename = file.filename_download;
+      const src = `${API_URL}/assets/${file.id}/${encodeURIComponent(
+        filename
+      )}`;
+      if (/\.(mp4|webm|ogg)$/i.test(filename)) {
         return {
           type: "video",
-          sources: [{ src: url, type: "video/mp4" }],
-        };
+          sources: [{ src, type: "video/mp4" }],
+        } as Slide;
       }
-      return { src: url };
+      return { src } as Slide;
     });
 
   return (
@@ -96,7 +103,8 @@ export default function TennisCenterPage() {
         {/* Thumbnails grid */}
         <div className="grid grid-cols-3 gap-[8px] lg:gap-5">
           {slides.map((slide, i) => {
-            const thumbUrl = "src" in slide ? slide.src : slide.sources[0].src;
+            const isVideo = slide.type === "video";
+            const url = isVideo ? slide.sources![0].src : (slide as any).src;
             return (
               <div
                 key={i}
@@ -106,19 +114,29 @@ export default function TennisCenterPage() {
                   setLightboxOpen(true);
                 }}
               >
-                <Image
-                  src={thumbUrl}
-                  alt={`Item ${i + 1}`}
-                  fill
-                  unoptimized
-                  className="rounded-lg hover:scale-105 transition-all duration-300 ease-in-out object-cover"
-                />
+                {isVideo ? (
+                  <video
+                    src={url}
+                    muted
+                    playsInline
+                    preload="metadata"
+                    className="absolute inset-0 w-full h-full object-cover hover:scale-105 transition-all duration-300 ease-in-out"
+                  />
+                ) : (
+                  <Image
+                    src={url}
+                    alt={`Item ${i + 1}`}
+                    fill
+                    unoptimized
+                    className="rounded-lg hover:scale-105 transition-all duration-300 ease-in-out object-cover"
+                  />
+                )}
               </div>
             );
           })}
         </div>
 
-        {/* Lightbox with image + video support */}
+        {/* Lightbox */}
         <Lightbox
           open={lightboxOpen}
           close={() => setLightboxOpen(false)}
@@ -133,7 +151,7 @@ export default function TennisCenterPage() {
           video={{ controls: true, playsInline: true }}
         />
 
-        {/* "Mostrar Tudo" button */}
+        {/* Mostrar Tudo */}
         {hasMore && !showAll && (
           <div className="flex justify-center mt-4">
             <Button onClick={handleShowAll}>Mostrar Tudo</Button>

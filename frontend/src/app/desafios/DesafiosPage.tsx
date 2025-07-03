@@ -163,8 +163,8 @@ export default function DesafiosPage() {
   };
 
   return (
-    <section className="bg-[var(--background-color)]">
-      <div className="container sectionSpacing">
+    <section className="flex flex-col min-h-screen bg-[var(--background-color)]">
+      <div className="container sectionSpacing flex-grow">
         <h2 className="sectionHeading">Desafios</h2>
         <FilterButtons
           options={["Próximos", "Últimos"]}
