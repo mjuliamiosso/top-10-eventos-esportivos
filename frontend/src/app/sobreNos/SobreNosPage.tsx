@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import ContactInfo from "@/components/aboutUs/ContactInfo";
-import Project from "@/components/aboutUs/Project";
+import ContactInfo from "../../components/aboutUs/ContactInfo";
+import Project from "../../components/aboutUs/Project";
 import { IoLocationOutline } from "react-icons/io5";
 import { BsFacebook, BsInstagram, BsWhatsapp } from "react-icons/bs";
 
