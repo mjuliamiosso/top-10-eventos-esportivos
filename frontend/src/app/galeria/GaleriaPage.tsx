@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import Image from "next/image";
 import Button from "@/components/common/Button";
 import Select from "@/components/common/Select";
-import { FaPlus } from "react-icons/fa";
-import Lightbox from "yet-another-react-lightbox";
+import Lightbox, { type Slide } from "yet-another-react-lightbox";
+import Video from "yet-another-react-lightbox/plugins/video";
 import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
@@ -22,27 +22,34 @@ type GalleryFilter = {
   datahora?: { _between: [string, string] };
 };
 
+type MesOption = {
+  value: string; // e.g. "2025-06"
+  label: string; // e.g. "jun 25"
+};
+
 const API_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
 const ITEMS_PER_PAGE = 6;
 
-type MesOption = {
-  value: string; // e.g. "2025-07"
-  label: string; // e.g. "jul 25"
-};
-
 export default function Galeria() {
-  const [imagens, setImagens] = useState<ImagemItem[]>([]);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  // remove duplicates by id
+  const dedupeById = (items: ImagemItem[]): ImagemItem[] => {
+    const seen = new Set<string>();
+    return items.filter((item) => {
+      if (seen.has(item.id)) return false;
+      seen.add(item.id);
+      return true;
+    });
+  };
 
-  // month–year picker state
+  const [imagens, setImagens] = useState<ImagemItem[]>([]);
+  const [hasMore, setHasMore] = useState(true);
+  const [showAll, setShowAll] = useState(false);
   const [meses, setMeses] = useState<MesOption[]>([]);
   const [selectedMes, setSelectedMes] = useState<string>("");
-
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [, setCurrentIndex] = useState(0);
 
-  // build the month/year options from all datahora values
+  // load month options
   useEffect(() => {
     axios
       .get<{ data: { datahora: string }[] }>(`${API_URL}/items/Galeria`, {
@@ -56,14 +63,14 @@ export default function Galeria() {
         const raw = Array.from(
           new Set(res.data.data.map((i) => i.datahora.slice(0, 7)))
         ).sort((a, b) => b.localeCompare(a));
-        const opts: MesOption[] = raw.map((ym) => {
-          const d = new Date(ym + "-01");
+        const opts = raw.map((ym) => {
+          const [yy, mm] = ym.split("-");
+          const d = new Date(Number(yy), Number(mm) - 1, 1);
           const month = d
             .toLocaleString("pt-BR", { month: "short" })
             .toLowerCase()
             .replace(/\.$/, "");
-          const year = d.getFullYear().toString().slice(-2);
-          return { value: ym, label: `${month} ${year}` };
+          return { value: ym, label: `${month} ${yy.slice(-2)}` };
         });
         setMeses(opts);
         if (opts.length) setSelectedMes(opts[0].value);
@@ -71,120 +78,137 @@ export default function Galeria() {
       .catch(console.error);
   }, []);
 
-  // fetch a page, filtered by selectedMes
-  const fetchPage = useCallback(
-    (pageNum: number) => {
-      const filter: GalleryFilter = { status: { _eq: "published" } };
-      if (selectedMes) {
-        const [y, m] = selectedMes.split("-");
-        const start = `${y}-${m}-01`;
-        const lastDay = new Date(Number(y), Number(m), 0).getDate();
-        const end = `${y}-${m}-${String(lastDay).padStart(2, "0")}`;
-        filter.datahora = { _between: [start, end] };
-      }
-
-      axios
-        .get<{ data: ImagemItem[] }>(`${API_URL}/items/Galeria`, {
-          params: {
-            filter,
-            fields: ["id", "imagem", "datahora"],
-            sort: ["-datahora"],
-            limit: ITEMS_PER_PAGE + 1,
-            offset: (pageNum - 1) * ITEMS_PER_PAGE,
-          },
-        })
-        .then((res) => {
-          const fetched = res.data.data;
-          if (fetched.length > ITEMS_PER_PAGE) {
-            const itemsToShow = fetched.slice(0, ITEMS_PER_PAGE);
-            setImagens((prev) =>
-              pageNum === 1 ? itemsToShow : [...prev, ...itemsToShow]
-            );
-            setHasMore(true);
-          } else {
-            setImagens((prev) =>
-              pageNum === 1 ? fetched : [...prev, ...fetched]
-            );
-            setHasMore(false);
-          }
-        })
-        .catch(console.error);
-    },
-    [selectedMes]
-  );
-
+  // load first page when month changes
   useEffect(() => {
-    setPage(1);
-    fetchPage(1);
-  }, [selectedMes, fetchPage]);
+    setShowAll(false);
+    const filter: GalleryFilter = { status: { _eq: "published" } };
+    if (selectedMes) {
+      const [y, m] = selectedMes.split("-");
+      const start = `${y}-${m}-01`;
+      const lastDay = new Date(Number(y), Number(m), 0).getDate();
+      const end = `${y}-${m}-${String(lastDay).padStart(2, "0")}`;
+      filter.datahora = { _between: [start, end] };
+    }
 
-  const handleLoadMore = () => {
-    const next = page + 1;
-    setPage(next);
-    fetchPage(next);
-  };
+    axios
+      .get<{ data: ImagemItem[] }>(`${API_URL}/items/Galeria`, {
+        params: {
+          filter,
+          fields: ["id", "imagem", "datahora"],
+          sort: ["-datahora"],
+          limit: ITEMS_PER_PAGE + 1,
+          offset: 0,
+        },
+      })
+      .then((res) => {
+        const fetched = res.data.data;
+        const initial =
+          fetched.length > ITEMS_PER_PAGE
+            ? fetched.slice(0, ITEMS_PER_PAGE)
+            : fetched;
+        setImagens(dedupeById(initial));
+        setHasMore(fetched.length > ITEMS_PER_PAGE);
+      })
+      .catch(console.error);
+  }, [selectedMes]);
 
-  const slides = imagens
+  // load remaining items on "Mostrar Tudo"
+  const handleShowAll = useCallback(() => {
+    const filter: GalleryFilter = { status: { _eq: "published" } };
+    if (selectedMes) {
+      const [y, m] = selectedMes.split("-");
+      const start = `${y}-${m}-01`;
+      const lastDay = new Date(Number(y), Number(m), 0).getDate();
+      const end = `${y}-${m}-${String(lastDay).padStart(2, "0")}`;
+      filter.datahora = { _between: [start, end] };
+    }
+
+    axios
+      .get<{ data: ImagemItem[] }>(`${API_URL}/items/Galeria`, {
+        params: {
+          filter,
+          fields: ["id", "imagem", "datahora"],
+          sort: ["-datahora"],
+          limit: -1,
+          offset: imagens.length,
+        },
+      })
+      .then((res) => {
+        setImagens((prev) => dedupeById([...prev, ...res.data.data]));
+        setHasMore(false);
+        setShowAll(true);
+      })
+      .catch(console.error);
+  }, [selectedMes, imagens.length]);
+
+  // prepare slides
+  const slides: Slide[] = imagens
     .filter((item) => item.imagem)
-    .map((item) => ({ src: `${API_URL}/assets/${item.imagem}` }));
+    .map((item) => {
+      const url = `${API_URL}/assets/${item.imagem}`;
+      if (/\.(mp4|webm|ogg)$/i.test(url)) {
+        return {
+          type: "video",
+          sources: [{ src: url, type: "video/mp4" }],
+        };
+      }
+      return { src: url };
+    });
 
   return (
     <section className="bg-[var(--background-color)]">
       <div className="container sectionSpacing">
         <h2 className="sectionHeading">Galeria</h2>
 
-        <div>
-          <div className="my-4 w-40">
-            <Select
-              name="mes"
-              options={meses.map((m) => ({
-                value: m.value,
-                label: m.label,
-              }))}
-              value={selectedMes}
-              onChange={(e) => setSelectedMes(e.target.value)}
-            />
-          </div>
-          <div className="grid grid-cols-3 gap-[8px] lg:gap-5">
-            {slides.map((slide, i) => (
+        <div className="my-4 w-40">
+          <Select
+            name="mes"
+            options={meses.map((m) => ({ value: m.value, label: m.label }))}
+            value={selectedMes}
+            onChange={(e) => setSelectedMes(e.target.value)}
+          />
+        </div>
+
+        <div className="grid grid-cols-3 gap-[8px] lg:gap-5">
+          {slides.map((slide, i) => {
+            const thumbUrl = "src" in slide ? slide.src : slide.sources![0].src;
+            return (
               <div
                 key={i}
-                className="block relative overflow-hidden rounded-[6px] aspect-square cursor-pointer"
+                className="relative overflow-hidden rounded-[6px] aspect-square cursor-pointer"
                 onClick={() => {
                   setCurrentIndex(i);
                   setLightboxOpen(true);
                 }}
               >
                 <Image
-                  src={slide.src}
-                  alt={`Imagem ${i + 1}`}
+                  src={thumbUrl}
+                  alt={`Item ${i + 1}`}
                   fill
                   unoptimized
                   className="object-cover hover:scale-105 transition-all duration-300 ease-in-out object-center"
                 />
               </div>
-            ))}
-          </div>
-
-          <Lightbox
-            open={lightboxOpen}
-            close={() => setLightboxOpen(false)}
-            slides={slides}
-            index={currentIndex}
-            plugins={[Thumbnails]}
-            thumbnails={{
-              position: "bottom",
-              border: 2,
-              borderColor: "#61646b",
-            }}
-          />
+            );
+          })}
         </div>
 
-        {hasMore && (
+        <Lightbox
+          open={lightboxOpen}
+          close={() => setLightboxOpen(false)}
+          slides={slides}
+          plugins={[Thumbnails, Video]}
+          thumbnails={{
+            position: "bottom",
+            border: 2,
+            borderColor: "#61646b",
+          }}
+          video={{ controls: true, playsInline: true }}
+        />
+
+        {hasMore && !showAll && (
           <div className="flex justify-center mt-4">
-            <Button onClick={handleLoadMore}>
-              <FaPlus /> Carregar mais
-            </Button>
+            <Button onClick={handleShowAll}>Mostrar Tudo</Button>
           </div>
         )}
       </div>

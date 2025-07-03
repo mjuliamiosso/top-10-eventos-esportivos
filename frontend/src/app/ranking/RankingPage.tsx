@@ -6,7 +6,6 @@ import Button from "@/components/common/Button";
 import FilterButtons from "@/components/common/FilterButtons";
 import Select from "@/components/common/Select";
 import Ranking from "@/components/ranking/Ranking";
-import { FaPlus } from "react-icons/fa6";
 
 const API_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
 
@@ -32,26 +31,37 @@ type MesOption = {
   label: string; // jun 25
 };
 
+// **New**: explicit params type instead of `any`
+type RankingRequestParams = {
+  filter: RankingFilter;
+  fields: string[];
+  sort: string[];
+  limit?: number;
+};
+
 export default function RankingPage() {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [meses, setMeses] = useState<MesOption[]>([]);
   const [selectedFilter, setSelectedFilter] = useState("Geral");
   const [selectedMes, setSelectedMes] = useState<string>("");
   const [rankings, setRankings] = useState<RankingItem[]>([]);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState<number | null>(10);
 
-  // search categories
+  // fetch categories, excluding "Extra"
   useEffect(() => {
     axios
       .get<{ data: Categoria[] }>(`${API_URL}/items/Categorias`)
       .then((res) => {
-        setCategorias(res.data.data);
+        const filtered = res.data.data.filter(
+          (c) => c.nome.trim().toLowerCase() !== "extra"
+        );
+        setCategorias(filtered);
         setSelectedFilter("Geral");
       })
       .catch(console.error);
   }, []);
 
-  // search months
+  // fetch available months
   useEffect(() => {
     axios
       .get<{ data: { mes: string }[] }>(`${API_URL}/items/Rankings`, {
@@ -81,7 +91,7 @@ export default function RankingPage() {
       .catch(console.error);
   }, []);
 
-  // search rankings
+  // fetch rankings whenever filter, month, or limit changes
   useEffect(() => {
     if (!selectedMes) return;
 
@@ -93,15 +103,18 @@ export default function RankingPage() {
       filter.categoria = { nome: { _eq: selectedFilter } };
     }
 
+    // **Use our typed params**
+    const params: RankingRequestParams = {
+      filter,
+      fields: ["id", "pontos", "jogador.nome"],
+      sort: ["-pontos"],
+    };
+    if (limit !== null) {
+      params.limit = limit;
+    }
+
     axios
-      .get<{ data: RankingItem[] }>(`${API_URL}/items/Rankings`, {
-        params: {
-          filter,
-          fields: ["id", "pontos", "jogador.nome"],
-          sort: ["-pontos"],
-          limit,
-        },
-      })
+      .get<{ data: RankingItem[] }>(`${API_URL}/items/Rankings`, { params })
       .then((res) => setRankings(res.data.data))
       .catch(console.error);
   }, [selectedFilter, selectedMes, limit]);
@@ -110,6 +123,7 @@ export default function RankingPage() {
     <section className="bg-[var(--background-color)]">
       <div className="container sectionSpacing">
         <h2 className="sectionHeading">Ranking</h2>
+
         {/* category filter */}
         <div className="flex justify-center mb-4">
           <FilterButtons
@@ -129,7 +143,7 @@ export default function RankingPage() {
           />
         </div>
 
-        {/* rankings */}
+        {/* rankings list */}
         <div className="flex flex-col gap-2">
           <div className="flex px-[14px] justify-between items-center w-full text-[var(--dark-gray)] font-bold text-sm">
             <div className="flex items-center gap-5">
@@ -150,12 +164,10 @@ export default function RankingPage() {
           </div>
         </div>
 
-        {/* load more */}
-        {rankings.length === limit && (
+        {/* “Mostrar Tudo” button */}
+        {limit !== null && (
           <div className="flex justify-center mt-4">
-            <Button onClick={() => setLimit((prev) => prev + 10)}>
-              <FaPlus /> Carregar mais
-            </Button>
+            <Button onClick={() => setLimit(null)}>Mostrar Tudo</Button>
           </div>
         )}
       </div>

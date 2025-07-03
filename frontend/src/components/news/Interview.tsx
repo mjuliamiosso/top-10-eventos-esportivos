@@ -21,7 +21,7 @@ const Interview: FC<InterviewProps> = ({ titulo, endereco, data, video }) => {
   };
 
   return (
-    <div className="flex flex-col gap-5 w-[180px]">
+    <div className="flex flex-col gap-5 w-[280px]">
       {src ? (
         <div className="relative w-[180px] h-[300px] rounded-lg overflow-hidden bg-gray-200">
           <video
