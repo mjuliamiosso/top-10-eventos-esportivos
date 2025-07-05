@@ -273,6 +273,8 @@ export default function HomePage() {
           ssr
           infinite
           arrows
+          autoPlay
+          autoPlaySpeed={3000}
           responsive={responsiveHero}
         >
           {banners.map((src, i) => (

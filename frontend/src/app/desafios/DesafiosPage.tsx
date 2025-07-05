@@ -67,11 +67,15 @@ export default function DesafiosPage() {
 
   const fetchPage = useCallback(
     async (pageNum: number) => {
-      const now = new Date().toISOString();
+      const nowLocal = new Date(
+        Date.now() - new Date().getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .slice(0, 19);
       const dateFilter =
         filter === "Próximos"
-          ? { "filter[datahora][_gte]": now }
-          : { "filter[datahora][_lt]": now };
+          ? { "filter[datahora][_gte]": nowLocal }
+          : { "filter[datahora][_lt]": nowLocal };
 
       const res = await axios.get<{ data: RawDesafio[] }>(
         `${API_URL}/items/Desafios`,
