@@ -389,7 +389,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Call to action */}
+      {/* cta */}
       <section className="bg-[var(--secondary-color)] py-[60px]">
         <div className="container flex justify-center items-center flex-col lg:flex-row gap-5">
           <p className="text-2xl text-center font-bold text-[var(--text-white)]">
