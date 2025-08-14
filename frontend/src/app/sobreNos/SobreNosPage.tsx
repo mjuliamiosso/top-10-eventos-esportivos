@@ -105,7 +105,7 @@ export default function SobreNosPage() {
               />
             </a>
             <a
-              href="https://www.facebook.com/rgtatopten?mibextid=2JQ9oc"
+              href="https://www.facebook.com/helderaugustopereira?locale=pt_BR"
               target="_blank"
               rel="noopener noreferrer"
             >

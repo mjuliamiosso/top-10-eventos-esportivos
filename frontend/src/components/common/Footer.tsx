@@ -48,7 +48,7 @@ const Footer = () => {
                 <FaWhatsapp />
               </Link>
               <Link
-                href={"https://www.facebook.com/rgtatopten?mibextid=2JQ9oc"}
+                href={"https://www.facebook.com/helderaugustopereira?locale=pt_BR"}
                 target="_blank"
               >
                 <FaFacebook />
