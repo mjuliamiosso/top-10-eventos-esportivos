@@ -68,12 +68,12 @@ export default function RankingPage() {
         params: {
           fields: ["mes"],
           filter: { status: { _eq: "published" } },
+          sort: ["-mes"], // newest first
+          limit: -1, // get all, not just first 100
         },
       })
       .then((res) => {
-        const rawMeses = Array.from(
-          new Set(res.data.data.map((r) => r.mes))
-        ).sort((a, b) => b.localeCompare(a));
+        const rawMeses = Array.from(new Set(res.data.data.map((r) => r.mes)));
 
         const opts: MesOption[] = rawMeses.map((raw) => {
           const d = new Date(raw);
