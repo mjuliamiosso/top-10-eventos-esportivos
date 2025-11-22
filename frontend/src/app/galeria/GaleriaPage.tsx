@@ -22,11 +22,14 @@ type ImagemItem = {
 
 type GalleryFilter = {
   status: { _eq: "published" };
-  datahora?: { _between: [string, string] };
+  datahora?: {
+    _gte: string;
+    _lt: string;
+  };
 };
 
 type MesOption = {
-  value: string; // e.g. "2025-10-01" - using full date format like Rankings
+  value: string; // e.g. "2025-10-01"
   label: string; // e.g. "out 25"
 };
 
@@ -52,14 +55,14 @@ export default function Galeria() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [, setCurrentIndex] = useState(0);
 
-  // load month options - FIXED: using same approach as Rankings
+  // load month options
   useEffect(() => {
     axios
       .get<{ data: { datahora: string }[] }>(`${API_URL}/items/Galeria`, {
         params: {
           fields: ["datahora"],
           filter: { status: { _eq: "published" } },
-          sort: ["-datahora"], // newest first
+          sort: ["-datahora"],
           limit: -1,
         },
       })
@@ -68,14 +71,13 @@ export default function Galeria() {
         const rawMeses = Array.from(
           new Set(
             res.data.data.map((item) => {
-              // Extract YYYY-MM-01 format for consistency
               const date = new Date(item.datahora);
               const year = date.getFullYear();
               const month = String(date.getMonth() + 1).padStart(2, "0");
               return `${year}-${month}-01`;
             })
           )
-        ).sort((a, b) => b.localeCompare(a)); // newest first
+        ).sort((a, b) => b.localeCompare(a));
 
         const opts: MesOption[] = rawMeses.map((raw) => {
           const d = new Date(raw);
@@ -93,7 +95,7 @@ export default function Galeria() {
       .catch(console.error);
   }, []);
 
-  // load first page when month changes - FIXED: using proper date range
+  // load first page when month changes
   useEffect(() => {
     if (!selectedMes) return;
 
@@ -103,15 +105,27 @@ export default function Galeria() {
     
     // Extract year and month from selectedMes (format: YYYY-MM-01)
     const [year, month] = selectedMes.split("-");
-    const y = parseInt(year);
-    const m = parseInt(month);
+    const yearNum = parseInt(year);
+    const monthNum = parseInt(month);
     
-    // Create proper date range for the entire month
+    // Use _gte and _lt for cleaner date range filtering
+    // This avoids timezone issues and is more reliable
     const start = `${year}-${month}-01`;
-    const lastDay = new Date(y, m, 0).getDate();
-    const end = `${year}-${month}-${String(lastDay).padStart(2, "0")} 23:59:59`;
     
-    filter.datahora = { _between: [start, end] };
+    // Calculate next month for _lt (exclusive upper bound)
+    let nextMonth = monthNum + 1;
+    let nextYear = yearNum;
+    if (nextMonth > 12) {
+      nextMonth = 1;
+      nextYear += 1;
+    }
+    const nextMonthStr = String(nextMonth).padStart(2, "0");
+    const end = `${nextYear}-${nextMonthStr}-01`;
+    
+    filter.datahora = {
+      _gte: start,
+      _lt: end
+    };
 
     axios
       .get<{ data: ImagemItem[] }>(`${API_URL}/items/Galeria`, {
@@ -135,21 +149,31 @@ export default function Galeria() {
       .catch(console.error);
   }, [selectedMes]);
 
-  // load remaining items on "Mostrar Tudo" - FIXED: same date range logic
+  // load remaining items on "Mostrar Tudo"
   const handleShowAll = useCallback(() => {
     if (!selectedMes) return;
 
     const filter: GalleryFilter = { status: { _eq: "published" } };
     
     const [year, month] = selectedMes.split("-");
-    const y = parseInt(year);
-    const m = parseInt(month);
+    const yearNum = parseInt(year);
+    const monthNum = parseInt(month);
     
     const start = `${year}-${month}-01`;
-    const lastDay = new Date(y, m, 0).getDate();
-    const end = `${year}-${month}-${String(lastDay).padStart(2, "0")} 23:59:59`;
     
-    filter.datahora = { _between: [start, end] };
+    let nextMonth = monthNum + 1;
+    let nextYear = yearNum;
+    if (nextMonth > 12) {
+      nextMonth = 1;
+      nextYear += 1;
+    }
+    const nextMonthStr = String(nextMonth).padStart(2, "0");
+    const end = `${nextYear}-${nextMonthStr}-01`;
+    
+    filter.datahora = {
+      _gte: start,
+      _lt: end
+    };
 
     axios
       .get<{ data: ImagemItem[] }>(`${API_URL}/items/Galeria`, {
