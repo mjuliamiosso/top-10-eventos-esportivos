@@ -26,8 +26,8 @@ type GalleryFilter = {
 };
 
 type MesOption = {
-  value: string; // e.g. "2025-06"
-  label: string; // e.g. "jun 25"
+  value: string; // e.g. "2025-10-01" - using full date format like Rankings
+  label: string; // e.g. "out 25"
 };
 
 const API_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://localhost:8055";
@@ -52,47 +52,66 @@ export default function Galeria() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [, setCurrentIndex] = useState(0);
 
-  // load month options
+  // load month options - FIXED: using same approach as Rankings
   useEffect(() => {
     axios
       .get<{ data: { datahora: string }[] }>(`${API_URL}/items/Galeria`, {
         params: {
           fields: ["datahora"],
           filter: { status: { _eq: "published" } },
+          sort: ["-datahora"], // newest first
           limit: -1,
         },
       })
       .then((res) => {
-        const raw = Array.from(
-          new Set(res.data.data.map((i) => i.datahora.slice(0, 7)))
-        ).sort((a, b) => b.localeCompare(a));
-        const opts = raw.map((ym) => {
-          const [yy, mm] = ym.split("-");
-          const d = new Date(Number(yy), Number(mm) - 1, 1);
+        // Extract unique months from the datahora field
+        const rawMeses = Array.from(
+          new Set(
+            res.data.data.map((item) => {
+              // Extract YYYY-MM-01 format for consistency
+              const date = new Date(item.datahora);
+              const year = date.getFullYear();
+              const month = String(date.getMonth() + 1).padStart(2, "0");
+              return `${year}-${month}-01`;
+            })
+          )
+        ).sort((a, b) => b.localeCompare(a)); // newest first
+
+        const opts: MesOption[] = rawMeses.map((raw) => {
+          const d = new Date(raw);
           const month = d
             .toLocaleString("pt-BR", { month: "short" })
             .toLowerCase()
             .replace(/\.$/, "");
-          return { value: ym, label: `${month} ${yy.slice(-2)}` };
+          const year = d.getFullYear().toString().slice(-2);
+          return { value: raw, label: `${month} ${year}` };
         });
+
         setMeses(opts);
         if (opts.length) setSelectedMes(opts[0].value);
       })
       .catch(console.error);
   }, []);
 
-  // load first page when month changes
+  // load first page when month changes - FIXED: using proper date range
   useEffect(() => {
+    if (!selectedMes) return;
+
     setShowAll(false);
 
     const filter: GalleryFilter = { status: { _eq: "published" } };
-    if (selectedMes) {
-      const [y, m] = selectedMes.split("-");
-      const start = `${y}-${m}-01`;
-      const lastDay = new Date(Number(y), Number(m), 0).getDate();
-      const end = `${y}-${m}-${String(lastDay).padStart(2, "0")}`;
-      filter.datahora = { _between: [start, end] };
-    }
+    
+    // Extract year and month from selectedMes (format: YYYY-MM-01)
+    const [year, month] = selectedMes.split("-");
+    const y = parseInt(year);
+    const m = parseInt(month);
+    
+    // Create proper date range for the entire month
+    const start = `${year}-${month}-01`;
+    const lastDay = new Date(y, m, 0).getDate();
+    const end = `${year}-${month}-${String(lastDay).padStart(2, "0")} 23:59:59`;
+    
+    filter.datahora = { _between: [start, end] };
 
     axios
       .get<{ data: ImagemItem[] }>(`${API_URL}/items/Galeria`, {
@@ -116,16 +135,21 @@ export default function Galeria() {
       .catch(console.error);
   }, [selectedMes]);
 
-  // load remaining items on "Mostrar Tudo"
+  // load remaining items on "Mostrar Tudo" - FIXED: same date range logic
   const handleShowAll = useCallback(() => {
+    if (!selectedMes) return;
+
     const filter: GalleryFilter = { status: { _eq: "published" } };
-    if (selectedMes) {
-      const [y, m] = selectedMes.split("-");
-      const start = `${y}-${m}-01`;
-      const lastDay = new Date(Number(y), Number(m), 0).getDate();
-      const end = `${y}-${m}-${String(lastDay).padStart(2, "0")}`;
-      filter.datahora = { _between: [start, end] };
-    }
+    
+    const [year, month] = selectedMes.split("-");
+    const y = parseInt(year);
+    const m = parseInt(month);
+    
+    const start = `${year}-${month}-01`;
+    const lastDay = new Date(y, m, 0).getDate();
+    const end = `${year}-${month}-${String(lastDay).padStart(2, "0")} 23:59:59`;
+    
+    filter.datahora = { _between: [start, end] };
 
     axios
       .get<{ data: ImagemItem[] }>(`${API_URL}/items/Galeria`, {

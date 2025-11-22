@@ -142,16 +142,24 @@ export default function HomePage() {
       .then((res) => setNewsList(res.data.data))
       .catch(console.error);
 
-    // Latest month
+    // Latest month - FIXED: using same approach as Rankings page
     axios
       .get<{ data: MesRecord[] }>(`${API_URL}/items/Rankings`, {
-        params: { fields: "mes", filter: { status: { _eq: "published" } } },
+        params: {
+          fields: ["mes"],
+          filter: { status: { _eq: "published" } },
+          sort: ["-mes"], // Sort descending to get newest first
+          limit: -1, // Get all to ensure we find the latest
+        },
       })
       .then((res) => {
+        // Get unique months and sort descending
         const meses = Array.from(new Set(res.data.data.map((r) => r.mes))).sort(
           (a, b) => b.localeCompare(a)
         );
-        if (meses.length) setLatestMes(meses[0]);
+        if (meses.length) {
+          setLatestMes(meses[0]);
+        }
       })
       .catch(console.error);
 
@@ -237,20 +245,21 @@ export default function HomePage() {
       .catch(console.error);
   }, []);
 
-  // Ranking data per category
+  // Ranking data per category - FIXED: proper filter structure
   useEffect(() => {
     if (!latestMes) return;
+    
     categorias.forEach((cat) => {
       axios
         .get<{ data: RankingItem[] }>(`${API_URL}/items/Rankings`, {
           params: {
-            fields: "id,pontos,jogador.nome",
+            fields: ["id", "pontos", "jogador.nome"],
             filter: {
               status: { _eq: "published" },
               mes: { _eq: latestMes },
               categoria: { nome: { _eq: cat } },
             },
-            sort: "-pontos",
+            sort: ["-pontos"], // Array format like Rankings page
             limit: 5,
           },
         })
