@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   database:
     container_name: top10-db
@@ -118,7 +116,17 @@ services:
 
 volumes:
   db-data:
+    external: true
+    name: top10_db-data
   cache-data:
+    external: true
+    name: top10_cache-data
   uploads:
+    external: true
+    name: top10_uploads
   caddy_data:
+    external: true
+    name: top10_caddy_data
   caddy_config:
+    external: true
+    name: top10_caddy_config
