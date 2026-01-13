@@ -248,7 +248,7 @@ export default function HomePage() {
   // Ranking data per category - FIXED: proper filter structure
   useEffect(() => {
     if (!latestMes) return;
-    
+
     categorias.forEach((cat) => {
       axios
         .get<{ data: RankingItem[] }>(`${API_URL}/items/Rankings`, {
@@ -259,7 +259,7 @@ export default function HomePage() {
               mes: { _eq: latestMes },
               categoria: { nome: { _eq: cat } },
             },
-            sort: ["-pontos"], // Array format like Rankings page
+            sort: ["-pontos", "sort"],
             limit: 5,
           },
         })

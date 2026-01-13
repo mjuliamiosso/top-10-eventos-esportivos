@@ -107,11 +107,8 @@ export default function RankingPage() {
     const params: RankingRequestParams = {
       filter,
       fields: ["id", "pontos", "jogador.nome"],
-      sort: ["-pontos"],
+      sort: ["-pontos", "sort"],
     };
-    if (limit !== null) {
-      params.limit = limit;
-    }
 
     axios
       .get<{ data: RankingItem[] }>(`${API_URL}/items/Rankings`, { params })
