@@ -259,7 +259,7 @@ export default function HomePage() {
               mes: { _eq: latestMes },
               categoria: { nome: { _eq: cat } },
             },
-            sort: ["-pontos", "sort"],
+            sort: ["-pontos", "date_created"],
             limit: 5,
           },
         })

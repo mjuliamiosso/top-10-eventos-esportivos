@@ -107,7 +107,7 @@ export default function RankingPage() {
     const params: RankingRequestParams = {
       filter,
       fields: ["id", "pontos", "jogador.nome"],
-      sort: ["-pontos", "sort"],
+      sort: ["-pontos", "date_created"],
     };
 
     axios
